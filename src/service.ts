@@ -44,13 +44,17 @@ export class Service {
 			const method = this[name as keyof Service]
 			if (
 				Object.getOwnPropertyDescriptor(method, '_transient')?.value === true ||
-				name === 'constructor'
-			) {
-				return
-			}
-			if (method instanceof Function) {
+				name === 'constructor' ||
+				typeof method !== 'function'
+			) return
+			if (this._p_props.endpoints[name])
 				methodMap.set(name, method.bind(this))
-			}
+			else if (
+				!(Object.getOwnPropertyNames(this._p_props.hooks ?? {}).find((hookName) =>
+					this._p_props.hooks?.[hookName].includes(name)
+				) ?? 0 > 0)
+			)
+				throw new Error(`Method "${name}" in service "${this.constructor.name}" is not decorated, use the @Transient decorator to ignore this method.`)
 		})
 
 		return methodMap
@@ -59,12 +63,9 @@ export class Service {
 	@Transient
 	private _buildEndpointFunction(name: string) {
 		const endpoint = this._p_props.endpoints[name]
-		if (!endpoint) {
-			throw new Error(`Method "${name}" in service "${this.constructor.name}" is not defined, use the @Transient decorator to ignore this method.`)
-		}
-		this[name as keyof Service] = async () => {
-			const url = `${this._g_props?.url}${this._p_props.suffix ?? ''}${endpoint.url}`
+		const url = `${this._g_props?.url}${this._p_props.suffix ?? ''}${endpoint.url}`
 
+		this[name as keyof Service] = async () => {
 			const result = await this._axios.request({
 				method: endpoint.method,
 				url,
