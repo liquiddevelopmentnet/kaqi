@@ -2,7 +2,7 @@ import axios, { Axios } from 'axios'
 import { ServiceBuilder } from '..'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const transient = (target: any, methodName: string) =>
+export const Transient = (target: any, methodName: string) =>
 	Object.defineProperty(target[methodName], '_transient', {
 		value: true,
 		writable: false,
@@ -22,11 +22,11 @@ export class Service {
 
 	constructor(builder: ServiceBuilder) {
 		this._g_props = builder
-		this._p_props = this._pre_p_props?? { endpoints: {} }
+		this._p_props = this._pre_p_props ?? { endpoints: {} }
 		this._methodMap = this._makeMethodMap()
 
 		this._axios = axios.create({
-			baseURL: this._g_props.url + this._p_props.suffix??'',
+			baseURL: this._g_props.url + this._p_props.suffix ?? '',
 			headers: this._g_props.headers,
 		})
 
@@ -36,7 +36,7 @@ export class Service {
 		})
 	}
 
-	@transient
+	@Transient
 	private _makeMethodMap() {
 		const methodMap = new Map<string, (this: Service, ...args: never[]) => void>()
 
@@ -56,10 +56,13 @@ export class Service {
 		return methodMap
 	}
 
-	@transient
+	@Transient
 	private _buildEndpointFunction(name: string) {
+		const endpoint = this._p_props.endpoints[name]
+		if (!endpoint) {
+			throw new Error(`Method "${name}" in service "${this.constructor.name}" is not defined, use the @Transient decorator to ignore this method.`)
+		}
 		this[name as keyof Service] = async () => {
-			const endpoint = this._p_props.endpoints[name]
 			const url = `${this._g_props?.url}${this._p_props.suffix ?? ''}${endpoint.url}`
 
 			const result = await this._axios.request({
@@ -71,7 +74,7 @@ export class Service {
 		}
 	}
 
-	@transient
+	@Transient
 	private _injectHooks(name: string) {
 		if (this._p_props.hooks?.[name]) {
 			this._p_props.hooks[name].forEach((hookName: string) => {
