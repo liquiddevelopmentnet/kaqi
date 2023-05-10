@@ -14,17 +14,18 @@ import {
 	CONNECT,
 	CUSTOM,
 	ServiceBuilder,
+	Transient,
 } from '..'
 
 @UrlSuffix('/api')
 export class TestService extends Service {
 	@GET('/get')
-	async test() {}
+	async get() {}
 
-	@GET('/get2')
-	async test2() {}
+	@GET('/john')
+	async john() {}
 
-	@Hook('test2')
+	@Hook('john')
 	private hook() {
 		return {
 			foo: 'bar',
@@ -32,31 +33,36 @@ export class TestService extends Service {
 	}
 
 	@POST('/post')
-	async test3() {}
+	async post() {}
 
 	@PUT('/put')
-	async test4() {}
+	async put() {}
 
 	@PATCH('/patch')
-	async test5() {}
+	async patch() {}
 
 	@DELETE('/delete')
-	async test6() {}
+	async delete() {}
 
 	@HEAD('/head')
-	async test7() {}
+	async head() {}
 
 	@OPTIONS('/options')
-	async test8() {}
+	async options() {}
 
 	@TRACE('/trace')
-	async test9() {}
+	async trace() {}
 
 	@CONNECT('/connect')
-	async test10() {}
+	async connect() {}
 
 	@CUSTOM('CUSTOM', '/custom')
-	async test11() {}
+	async custom() {}
+
+	@Transient
+	async transient() {
+		return 'transient function'
+	}
 }
 
 const testService = new ServiceBuilder()

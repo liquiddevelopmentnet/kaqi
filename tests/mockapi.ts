@@ -4,7 +4,7 @@ export const mockApi = () => {
 	nock('http://api.com')
 		.get('/api/get')
 		.reply(200, { foo: 'get1' })
-		.get('/api/get2')
+		.get('/api/john')
 		.reply(200, { foo: 'get2' })
 		.post('/api/post')
 		.reply(200, { foo: 'post' })
