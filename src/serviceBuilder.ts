@@ -8,10 +8,10 @@ interface ServiceBuilderOptions {
 }
 
 export class ServiceBuilder {
-	public data: ServiceBuilderOptions
+	public options: ServiceBuilderOptions
 
 	public constructor(options: ServiceBuilderOptions) {
-		this.data = options
+		this.options = options
 	}
 
 	public build<T extends Service>(
@@ -21,8 +21,8 @@ export class ServiceBuilder {
 	}
 
 	public get url() {
-		return `${this.data.secure ?? true ? 'https' : 'http'}://${this.data.host}${
-			this.data.basePath ?? ''
-		}`
+		return `${this.options.secure ?? true ? 'https' : 'http'}://${
+			this.options.host
+		}${this.options.basePath ?? ''}`
 	}
 }

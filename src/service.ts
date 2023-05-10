@@ -20,7 +20,7 @@ export class Service {
 
 		this._axios = axios.create({
 			baseURL: this._g_props.url + this._p_props.suffix ?? '',
-			headers: this._g_props.data.headers,
+			headers: this._g_props.options.headers,
 		})
 
 		this._methodMap.forEach((_method, name) => {
