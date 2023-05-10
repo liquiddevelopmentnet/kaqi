@@ -65,9 +65,21 @@ export class TestService extends Service {
 	}
 }
 
-const testService = new ServiceBuilder({
+@UrlSuffix('/secure-api')
+export class SecureTestService extends Service {
+	@GET('/get-sec')
+	async get() {}
+}
+
+const builder = new ServiceBuilder({
 	host: 'api.com',
 	secure: false,
-}).build(TestService)
+})
 
-export { testService }
+const testService = builder.build(TestService)
+
+builder.options.host = 'secure-api.com'
+builder.options.secure = true
+const secureTestService = builder.build(SecureTestService)
+
+export { testService, secureTestService }

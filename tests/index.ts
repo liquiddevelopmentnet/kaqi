@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { mockApi } from './mockapi'
-import { TestService, testService } from './services'
+import { TestService, secureTestService, testService } from './services'
 
 mockApi()
 
@@ -69,5 +69,12 @@ describe('HTTP Methods', () => {
 	it('Custom Method', async () => {
 		const result = await testService.custom()
 		expect(result).to.deep.equal({ foo: 'custom' })
+	})
+})
+
+describe('HTTPS', () => {
+	it('GET', async () => {
+		const result = await secureTestService.get()
+		expect(result).to.deep.equal({ foo: 'get1-secure' })
 	})
 })
