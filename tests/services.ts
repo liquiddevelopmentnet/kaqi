@@ -65,9 +65,9 @@ export class TestService extends Service {
 	}
 }
 
-const testService = new ServiceBuilder()
-	.setEndpoint('api.com')
-	.setSecure(false)
-	.build(TestService)
+const testService = new ServiceBuilder({
+	host: 'api.com',
+	secure: false,
+}).build(TestService)
 
 export { testService }
