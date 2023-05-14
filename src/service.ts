@@ -1,5 +1,6 @@
 import axios, { Axios } from 'axios'
 import { ServiceBuilder, Transient } from '..'
+import { version } from '../package.json'
 
 export class Service {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -71,6 +72,10 @@ export class Service {
 			const result = await this._axios.request({
 				method: endpoint.method,
 				url,
+				headers: {
+					'User-Agent': `kaqi/${version}`,
+					...this._g_props?.options.headers,
+				},
 			})
 
 			return result.data

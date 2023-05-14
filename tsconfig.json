@@ -9,6 +9,7 @@
 		"experimentalDecorators": true,
 		"outDir": "./lib",
 		"declaration": true,
-		"declarationDir": "./lib/types"
+		"declarationDir": "./lib/types",
+		"resolveJsonModule": true
 	}
 }
