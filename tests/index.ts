@@ -78,3 +78,10 @@ describe('HTTPS', () => {
 		expect(result).to.deep.equal({ foo: 'get1-secure' })
 	})
 })
+
+describe('Headers', () => {
+	it('Basic GET', async () => {
+		const result = await testService.headers()
+		expect(result).to.deep.equal({ foo: 'headers' })
+	})
+})

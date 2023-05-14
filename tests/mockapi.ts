@@ -24,6 +24,9 @@ export const mockApi = () => {
 		.reply(200, { foo: 'connect' })
 		.intercept('/api/custom', 'CUSTOM')
 		.reply(200, { foo: 'custom' })
+		.get('/api/headers')
+		.matchHeader('Custom-Header', 'Custom-Value')
+		.reply(200, { foo: 'headers' })
 
 	nock('https://secure-api.com')
 		.get('/secure-api/get-sec')

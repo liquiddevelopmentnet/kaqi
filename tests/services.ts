@@ -15,6 +15,7 @@ import {
 	CUSTOM,
 	ServiceBuilder,
 	Transient,
+	Headers,
 } from '..'
 
 @UrlSuffix('/api')
@@ -63,6 +64,10 @@ export class TestService extends Service {
 	async transient() {
 		return 'transient function'
 	}
+
+	@GET('/headers')
+	@Headers({ 'Custom-Header': 'Custom-Value' })
+	async headers() {}
 }
 
 @UrlSuffix('/secure-api')

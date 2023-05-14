@@ -6,7 +6,10 @@ export class Service {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	public _pre_p_props: any
 	private _p_props: {
-		endpoints: Record<string, { url: string; method: string }>
+		endpoints: Record<
+			string,
+			{ url: string; method: string; headers?: Record<string, string> }
+		>
 		hooks: Record<string, string[]>
 		suffix?: string
 	}
@@ -75,6 +78,7 @@ export class Service {
 				headers: {
 					'User-Agent': `kaqi/${version}`,
 					...this._g_props?.options.headers,
+					...endpoint.headers,
 				},
 			})
 

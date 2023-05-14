@@ -5,12 +5,18 @@ const ensureProps = (target: Service, field: string) => {
 	target._pre_p_props[field] ||= {}
 }
 
+const ensureEndpoints = (target: Service, endpointName: string) => {
+	ensureProps(target, 'endpoints')
+	target._pre_p_props.endpoints[endpointName] ??= {}
+}
+
 const buildEndpoint =
 	(method: string) =>
 	(url: string) =>
 	(target: Service, endpointName: string) => {
-		ensureProps(target, 'endpoints')
-		target._pre_p_props.endpoints[endpointName] ??= { url, method: method }
+		ensureEndpoints(target, endpointName)
+		target._pre_p_props.endpoints[endpointName].url = url
+		target._pre_p_props.endpoints[endpointName].method = method
 	}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -46,6 +52,15 @@ export const CONNECT = buildEndpoint('CONNECT')
 
 export const CUSTOM =
 	(method: string, url: string) => (target: Service, endpointName: string) => {
-		ensureProps(target, 'endpoints')
-		target._pre_p_props.endpoints[endpointName] ??= { url, method: method }
+		ensureEndpoints(target, endpointName)
+		target._pre_p_props.endpoints[endpointName].url = url
+		target._pre_p_props.endpoints[endpointName].method = method
+	}
+
+export const Headers =
+	(headers: Record<string, string>) =>
+	(target: Service, endpointName: string) => {
+		ensureEndpoints(target, endpointName)
+		target._pre_p_props.endpoints[endpointName].headers ??= {}
+		Object.assign(target._pre_p_props.endpoints[endpointName].headers, headers)
 	}
