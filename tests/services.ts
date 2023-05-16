@@ -19,6 +19,7 @@ import {
 } from '..'
 
 @UrlSuffix('/api')
+@Headers.Service({ 'Custom-Header': 'Service' })
 export class TestService extends Service {
 	@GET('/get')
 	async get() {}
@@ -65,9 +66,18 @@ export class TestService extends Service {
 		return 'transient function'
 	}
 
-	@GET('/headers')
-	@Headers({ 'Custom-Header': 'Custom-Value' })
-	async headers() {}
+	@GET('/serviceheader')
+	async serviceHeader() {}
+
+	@GET('/methodheader')
+	@Headers.Method({ 'Custom-Header': 'Overridden' })
+	async methodHeader() {}
+}
+
+@UrlSuffix('/api')
+class WithoutHeadersService extends Service {
+	@GET('/globalheader')
+	async globalHeader() {}
 }
 
 @UrlSuffix('/secure-api')
@@ -79,12 +89,16 @@ export class SecureTestService extends Service {
 const builder = new ServiceBuilder({
 	host: 'api.com',
 	secure: false,
+	headers: {
+		'Custom-Header': 'Global',
+	},
 })
 
 const testService = builder.build(TestService)
+const withoutHeadersService = builder.build(WithoutHeadersService)
 
 builder.options.host = 'secure-api.com'
 builder.options.secure = true
 const secureTestService = builder.build(SecureTestService)
 
-export { testService, secureTestService }
+export { testService, secureTestService, withoutHeadersService }

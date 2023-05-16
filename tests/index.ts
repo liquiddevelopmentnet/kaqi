@@ -1,6 +1,11 @@
 import { expect } from 'chai'
 import { mockApi } from './mockapi'
-import { TestService, secureTestService, testService } from './services'
+import {
+	TestService,
+	secureTestService,
+	testService,
+	withoutHeadersService,
+} from './services'
 
 mockApi()
 
@@ -80,8 +85,20 @@ describe('HTTPS', () => {
 })
 
 describe('Headers', () => {
-	it('Basic GET', async () => {
-		const result = await testService.headers()
-		expect(result).to.deep.equal({ foo: 'headers' })
+	it('Global Headers', async () => {
+		// Using withoutHeadersService to test global headers because service headers override global headers
+		// This is also testing if the hierarchy of headers is correct
+		const result = await withoutHeadersService.globalHeader()
+		expect(result).to.deep.equal({ foo: 'globalheaders' })
+	})
+
+	it('Headers.Service', async () => {
+		const result = await testService.serviceHeader()
+		expect(result).to.deep.equal({ foo: 'serviceheaders' })
+	})
+
+	it('Headers.Method', async () => {
+		const result = await testService.methodHeader()
+		expect(result).to.deep.equal({ foo: 'methodheaders' })
 	})
 })

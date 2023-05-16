@@ -12,6 +12,7 @@ export class Service {
 		>
 		hooks: Record<string, string[]>
 		suffix?: string
+		headers?: Record<string, string>
 	}
 	private _g_props: ServiceBuilder | undefined
 	private _methodMap: Map<string, (this: Service, ...args: never[]) => void>
@@ -77,7 +78,8 @@ export class Service {
 				url,
 				headers: {
 					'User-Agent': `kaqi/${version}`,
-					...this._g_props?.options.headers,
+					...this._g_props?.options.headers, // Endpoint headers override service headers override global headers
+					...this._p_props.headers,
 					...endpoint.headers,
 				},
 			})
