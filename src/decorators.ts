@@ -57,20 +57,6 @@ export const CUSTOM =
 		target._pre_p_props.endpoints[endpointName].method = method
 	}
 
-/*export const Headers =
-	(headers: Record<string, string>) =>
-	(target: Service, endpointName: string) => {
-		ensureEndpoints(target, endpointName)
-		target._pre_p_props.endpoints[endpointName].headers ??= {}
-		Object.assign(target._pre_p_props.endpoints[endpointName].headers, headers)
-	}
-
-export const Headers =
-	(headers: Record<string, string>) => (target: typeof Service) => {
-		ensureProps(target.prototype, 'headers')
-		Object.assign(target.prototype._pre_p_props.headers, headers)
-	}*/
-
 export const Headers = {
 	Method:
 		(headers: Record<string, string>) =>
