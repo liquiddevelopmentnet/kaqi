@@ -1,4 +1,4 @@
-import axios, { Axios } from 'axios'
+import axios, { Axios, AxiosRequestConfig } from 'axios'
 import { ServiceBuilder, Transient } from '..'
 import { version } from '../package.json'
 
@@ -8,11 +8,17 @@ export class Service {
 	private _p_props: {
 		endpoints: Record<
 			string,
-			{ url: string; method: string; headers?: Record<string, string> }
+			{
+				url: string
+				method: string
+				headers?: Record<string, string>
+				axiosConfig?: AxiosRequestConfig
+			}
 		>
 		hooks: Record<string, string[]>
 		suffix?: string
 		headers?: Record<string, string>
+		axiosConfig?: AxiosRequestConfig
 	}
 	private _g_props: ServiceBuilder | undefined
 	private _methodMap: Map<string, (this: Service, ...args: never[]) => void>
@@ -81,6 +87,9 @@ export class Service {
 					...this._p_props.headers,
 					...endpoint.headers,
 				},
+				...this._g_props?.options.axiosConfig,
+				...this._p_props.axiosConfig,
+				...endpoint.axiosConfig,
 			})
 
 			return result.data

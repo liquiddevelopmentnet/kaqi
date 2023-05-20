@@ -1,3 +1,4 @@
+import { AxiosRequestConfig } from 'axios'
 import { Service } from '..'
 
 interface ServiceBuilderOptions {
@@ -5,6 +6,7 @@ interface ServiceBuilderOptions {
 	secure?: boolean
 	basePath?: string
 	headers?: Record<string, string>
+	axiosConfig?: AxiosRequestConfig
 }
 
 export class ServiceBuilder {
