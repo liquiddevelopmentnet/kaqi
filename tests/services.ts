@@ -16,10 +16,16 @@ import {
 	ServiceBuilder,
 	Transient,
 	Headers,
+	AxiosConfig,
 } from '..'
 
 @UrlSuffix('/api')
 @Headers.Service({ 'Custom-Header': 'Service' })
+@AxiosConfig.Service({
+	headers: {
+		'Axios-Config-Header': 'Service',
+	},
+})
 export class TestService extends Service {
 	@GET('/get')
 	async get() {}
@@ -30,7 +36,7 @@ export class TestService extends Service {
 	@Hook('john')
 	private hook() {
 		return {
-			foo: 'bar',
+			r: 'foo',
 		}
 	}
 
@@ -72,6 +78,13 @@ export class TestService extends Service {
 	@GET('/methodheader')
 	@Headers.Method({ 'Custom-Header': 'Overridden' })
 	async methodHeader() {}
+
+	@GET('/serviceconfig')
+	axiosConfigService() {}
+
+	@GET('/methodconfig')
+	@AxiosConfig.Method({ method: 'POST' })
+	axiosConfigMethod() {}
 }
 
 @UrlSuffix('/api')

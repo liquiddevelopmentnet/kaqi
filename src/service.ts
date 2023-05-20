@@ -78,18 +78,26 @@ export class Service {
 		}`
 
 		this[name as keyof Service] = async () => {
-			const result = await this._axios.request({
-				method: endpoint.method,
-				url,
-				headers: {
-					'User-Agent': `kaqi/${version}`,
-					...this._g_props?.options.headers, // Endpoint headers override service headers override global headers
-					...this._p_props.headers,
-					...endpoint.headers,
-				},
+			const axiosConfigInherit = {
 				...this._g_props?.options.axiosConfig,
 				...this._p_props.axiosConfig,
 				...endpoint.axiosConfig,
+			}
+
+			const result = await this._axios.request({
+				method: endpoint.method,
+				url,
+				...axiosConfigInherit,
+
+				headers: {
+					'User-Agent': `kaqi/${version}`,
+
+					...this._g_props?.options.headers, // Endpoint headers override service headers override global headers ...
+					...this._p_props.headers,
+					...endpoint.headers,
+
+					...axiosConfigInherit.headers,
+				},
 			})
 
 			return result.data
