@@ -17,6 +17,7 @@ import {
 	Transient,
 	Headers,
 	AxiosConfig,
+	Timeout,
 } from '..'
 
 @UrlSuffix('/api')
@@ -80,17 +81,28 @@ export class TestService extends Service {
 	async methodHeader() {}
 
 	@GET('/serviceconfig')
-	axiosConfigService() {}
+	async axiosConfigService() {}
 
 	@GET('/methodconfig')
 	@AxiosConfig.Method({ method: 'POST' })
-	axiosConfigMethod() {}
+	async axiosConfigMethod() {}
+
+	@GET('/timeout')
+	@Timeout.Method(100)
+	async timeout() {}
 }
 
 @UrlSuffix('/api')
 class WithoutHeadersService extends Service {
 	@GET('/globalheader')
 	async globalHeader() {}
+}
+
+@UrlSuffix('/api')
+@Timeout.Service(50)
+class TimeoutService extends Service {
+	@GET('/timeout')
+	async timeout() {}
 }
 
 @UrlSuffix('/secure-api')
@@ -109,9 +121,10 @@ const builder = new ServiceBuilder({
 
 const testService = builder.build(TestService)
 const withoutHeadersService = builder.build(WithoutHeadersService)
+const timeoutService = builder.build(TimeoutService)
 
 builder.options.host = 'secure-api.com'
 builder.options.secure = true
 const secureTestService = builder.build(SecureTestService)
 
-export { testService, secureTestService, withoutHeadersService }
+export { testService, secureTestService, withoutHeadersService, timeoutService }

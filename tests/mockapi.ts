@@ -54,6 +54,11 @@ export const mockApi = () => {
 		.post('/api/methodconfig')
 		.reply(200, { r: 'methodconfig' })
 
+		.get('/api/timeout')
+		.delay(500)
+		.reply(200, { r: 'timeout' })
+		.persist()
+
 	nock('https://secure-api.com')
 		.get('/secure-api/get-sec')
 		.reply(200, { r: 'get1-secure' })

@@ -4,6 +4,7 @@ import {
 	TestService,
 	secureTestService,
 	testService,
+	timeoutService,
 	withoutHeadersService,
 } from './services'
 
@@ -98,6 +99,26 @@ describe('`@AxiosConfig` Decorator Group', () => {
 	it('`@AxiosConfig.Method` Decorator', async () => {
 		const result = await testService.axiosConfigMethod()
 		expect(result).to.deep.equal({ r: 'methodconfig' })
+	})
+})
+
+describe('`@Timeout` Decorator Group', () => {
+	it('`@Timeout.Service` Decorator', async () => {
+		try {
+			await timeoutService.timeout()
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		} catch (e: any) {
+			expect(e.message).to.equal('timeout of 50ms exceeded')
+		}
+	})
+
+	it('`@Timeout.Method` Decorator', async () => {
+		try {
+			await testService.timeout()
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		} catch (e: any) {
+			expect(e.message).to.equal('timeout of 100ms exceeded')
+		}
 	})
 })
 
