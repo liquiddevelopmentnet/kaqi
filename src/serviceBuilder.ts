@@ -7,6 +7,7 @@ interface ServiceBuilderOptions {
 	basePath?: string
 	headers?: Record<string, string>
 	axiosConfig?: AxiosRequestConfig
+	timeout?: number
 }
 
 export class ServiceBuilder {

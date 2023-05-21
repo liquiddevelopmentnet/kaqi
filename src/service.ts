@@ -13,12 +13,14 @@ export class Service {
 				method: string
 				headers?: Record<string, string>
 				axiosConfig?: AxiosRequestConfig
+				timeout?: number
 			}
 		>
 		hooks: Record<string, string[]>
 		suffix?: string
 		headers?: Record<string, string>
 		axiosConfig?: AxiosRequestConfig
+		timeout?: number
 	}
 	private _g_props: ServiceBuilder | undefined
 	private _methodMap: Map<string, (this: Service, ...args: never[]) => void>
@@ -87,6 +89,12 @@ export class Service {
 			const result = await this._axios.request({
 				method: endpoint.method,
 				url,
+
+				timeout:
+					endpoint.timeout ??
+					this._p_props.timeout ??
+					this._g_props?.options.timeout,
+
 				...axiosConfigInherit,
 
 				headers: {

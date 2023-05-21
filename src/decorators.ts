@@ -99,3 +99,11 @@ export const AxiosConfig = {
 
 	// TODO: Request parameter config
 }
+
+export const Timeout = {
+	Service: (timeout: number) => (target: typeof Service) =>
+		buildServiceDecorator(target.prototype, { timeout }),
+
+	Method: (timeout: number) => (target: Service, endpointName: string) =>
+		buildMethodDecorator(target, endpointName, { timeout }),
+}
