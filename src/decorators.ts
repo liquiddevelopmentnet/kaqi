@@ -11,40 +11,33 @@ const ensureEndpoints = (target: Service, endpointName: string) => {
 	target._pre_p_props.endpoints[endpointName] ??= {}
 }
 
-const buildServiceDecorator = (
-	target: Service,
-	fields: Record<string, unknown>
-) => {
-	for (const field in fields) {
-		ensureProps(target, field)
-		if (typeof fields[field] === 'object')
-			Object.assign(target._pre_p_props[field], fields[field])
-		else target._pre_p_props[field] = fields[field]
+const buildServiceDecorator =
+	(fields: Record<string, unknown>) => (target: typeof Service) => {
+		for (const field in fields) {
+			ensureProps(target.prototype, field)
+			if (typeof fields[field] === 'object')
+				Object.assign(target.prototype._pre_p_props[field], fields[field])
+			else target.prototype._pre_p_props[field] = fields[field]
+		}
 	}
-}
 
-const buildMethodDecorator = (
-	target: Service,
-	endpointName: string,
-	fields: Record<string, unknown>
-) => {
-	ensureEndpoints(target, endpointName)
-	for (const field in fields) {
-		target._pre_p_props.endpoints[endpointName][field] ??= {}
-		if (typeof fields[field] === 'object')
-			Object.assign(
-				target._pre_p_props.endpoints[endpointName][field],
-				fields[field]
-			)
-		else target._pre_p_props.endpoints[endpointName][field] = fields[field]
+const buildMethodDecorator =
+	(fields: Record<string, unknown>) =>
+	(target: Service, endpointName: string) => {
+		ensureEndpoints(target, endpointName)
+		for (const field in fields) {
+			target._pre_p_props.endpoints[endpointName][field] ??= {}
+			if (typeof fields[field] === 'object')
+				Object.assign(
+					target._pre_p_props.endpoints[endpointName][field],
+					fields[field]
+				)
+			else target._pre_p_props.endpoints[endpointName][field] = fields[field]
+		}
 	}
-}
 
-const buildEndpointDecorator =
-	(method: string) =>
-	(url: string) =>
-	(target: Service, endpointName: string) =>
-		buildMethodDecorator(target, endpointName, { url, method })
+const buildEndpointDecorator = (method: string) => (url: string) =>
+	buildMethodDecorator({ url, method })
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Transient = (target: any, methodName: string) =>
@@ -53,10 +46,7 @@ export const Transient = (target: any, methodName: string) =>
 		writable: false,
 	})
 
-export const UrlSuffix =
-	(suffix = '') =>
-	(target: typeof Service) =>
-		buildServiceDecorator(target.prototype, { suffix })
+export const UrlSuffix = (suffix = '') => buildServiceDecorator({ suffix })
 
 export const Hook =
 	(endpointName: string) => (target: Service, hookName: string) => {
@@ -75,35 +65,28 @@ export const OPTIONS = buildEndpointDecorator('OPTIONS')
 export const TRACE = buildEndpointDecorator('TRACE')
 export const CONNECT = buildEndpointDecorator('CONNECT')
 
-export const CUSTOM =
-	(method: string, url: string) => (target: Service, endpointName: string) =>
-		buildMethodDecorator(target, endpointName, { url, method })
+export const CUSTOM = (method: string, url: string) =>
+	buildMethodDecorator({ url, method })
 
 export const Headers = {
-	Service: (headers: Record<string, string>) => (target: typeof Service) =>
-		buildServiceDecorator(target.prototype, { headers }),
-	Method:
-		(headers: Record<string, string>) =>
-		(target: Service, endpointName: string) =>
-			buildMethodDecorator(target, endpointName, { headers }),
+	Service: (headers: Record<string, string>) =>
+		buildServiceDecorator({ headers }),
+	Method: (headers: Record<string, string>) =>
+		buildMethodDecorator({ headers }),
 }
 
 export const AxiosConfig = {
-	Service: (axiosConfig: AxiosRequestConfig) => (target: typeof Service) =>
-		buildServiceDecorator(target.prototype, { axiosConfig }),
+	Service: (axiosConfig: AxiosRequestConfig) =>
+		buildServiceDecorator({ axiosConfig }),
 
-	Method:
-		(axiosConfig: AxiosRequestConfig) =>
-		(target: Service, endpointName: string) =>
-			buildMethodDecorator(target, endpointName, { axiosConfig }),
+	Method: (axiosConfig: AxiosRequestConfig) =>
+		buildMethodDecorator({ axiosConfig }),
 
 	// TODO: Request parameter config
 }
 
 export const Timeout = {
-	Service: (timeout: number) => (target: typeof Service) =>
-		buildServiceDecorator(target.prototype, { timeout }),
+	Service: (timeout: number) => buildServiceDecorator({ timeout }),
 
-	Method: (timeout: number) => (target: Service, endpointName: string) =>
-		buildMethodDecorator(target, endpointName, { timeout }),
+	Method: (timeout: number) => buildMethodDecorator({ timeout }),
 }
