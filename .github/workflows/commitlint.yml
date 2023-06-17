@@ -1,5 +1,4 @@
-name: commitlint
-
+name: Lint Commits
 on: [push, pull_request]
 
 jobs:
