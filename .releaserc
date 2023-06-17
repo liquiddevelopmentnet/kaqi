@@ -4,6 +4,30 @@
 	],
 	"plugins": [
 		"@semantic-release/git",
-		"@semantic-release/changelog"
+		"@semantic-release/github",
+		"@semantic-release/npm",
+		[
+			"@semantic-release/commit-analyzer",
+			{
+				"preset": "angular",
+				"releaseRules": [
+					{
+						"type": "docs",
+						"scope": "README",
+						"release": "patch"
+					},
+					{
+						"type": "refactor",
+						"release": "patch"
+					},
+					{
+						"scope": "no-release",
+						"release": false
+					}
+				]
+			}
+		],
+		"@semantic-release/changelog",
+		"@semantic-release/release-notes-generator"
 	]
 }
