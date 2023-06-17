@@ -22,3 +22,23 @@ jobs:
         uses: borales/actions-yarn@v4
         with:
           cmd: test
+
+      - name: Run build
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: build
+
+  publish:
+    name: publish
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/release'
+    steps:
+      - name: CD to lib
+        run: cd lib
+
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx semantic-release
