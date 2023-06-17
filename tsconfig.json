@@ -6,10 +6,12 @@
 		"forceConsistentCasingInFileNames": true,
 		"strict": true,
 		"skipLibCheck": true,
+		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
+		"allowJs": true,
 		"outDir": "./lib",
 		"declaration": true,
-		"declarationDir": "./lib/types",
 		"resolveJsonModule": true
-	}
+	},
+	"include": ["src", "index.ts"]
 }
