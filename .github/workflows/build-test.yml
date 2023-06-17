@@ -1,9 +1,9 @@
-name: build-test
+name: CI
 on: [push]
 
 jobs:
   build:
-    name: build and test
+    name: Build and Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -28,14 +28,25 @@ jobs:
         with:
           cmd: build
 
+      - uses: actions/upload-artifact@master
+        with:
+          name: build
+          path: lib
+
   publish:
-    name: publish
+    name: Publish
     needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/release'
     steps:
-      - name: CD to lib
-        run: cd lib
+      - uses: actions/checkout@master
+
+      - uses: actions/download-artifact@master
+        with:
+          name: build
+          path: lib
+
+      - run: cd lib
 
       - name: Release
         env:
