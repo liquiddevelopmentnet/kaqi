@@ -1,6 +1,6 @@
 {
 	"name": "kaqi",
-	"version": "0.1.0-alpha",
+	"version": "0.0.0-development",
 	"description": "A lightweight API wrapper framework utilizing axios",
 	"repository": "https://github.com/liquiddevelopmentnet/kaqi",
 	"author": "liquiddevelopmentnet",
@@ -8,10 +8,10 @@
 	"private": false,
 	"scripts": {
 		"test": "mocha --require ts-node/register tests/**/*.ts",
-		"pub": "yarn build && yarn publish lib --access public",
 		"build": "yarn clean && tsc && yarn copy-files",
 		"clean": "rm -rf lib",
-		"copy-files": "cp README.md LICENSE lib && cp package.json lib"
+		"copy-files": "cp README.md LICENSE lib && cp package.json lib",
+		"semantic-release": "semantic-release"
 	},
 	"devDependencies": {
 		"@commitlint/cli": "^17.6.5",
@@ -30,7 +30,8 @@
 		"nock": "^13.3.1",
 		"prettier": "^2.8.8",
 		"ts-node": "^10.9.1",
-		"typescript": "^5.0.4"
+		"typescript": "^5.0.4",
+		"semantic-release": "^21.0.5"
 	},
 	"dependencies": {
 		"axios": "^1.4.0"
