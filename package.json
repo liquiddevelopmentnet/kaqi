@@ -11,7 +11,8 @@
 		"build": "yarn clean && tsc && yarn copy-files",
 		"clean": "rm -rf lib",
 		"copy-files": "cp README.md LICENSE lib && cp package.json lib",
-		"semantic-release": "semantic-release"
+		"semantic-release": "semantic-release",
+		"prepare": "husky install"
 	},
 	"devDependencies": {
 		"@commitlint/cli": "^17.6.5",
