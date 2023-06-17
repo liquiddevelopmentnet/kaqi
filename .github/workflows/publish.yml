@@ -4,6 +4,11 @@ on:
     branches:
       - release
 
+permissions:
+  contents: write
+  deployments: write
+  pull-requests: write
+
 jobs:
   build:
     name: Publish
