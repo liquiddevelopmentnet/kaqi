@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios'
 import { ServiceBuilder, Transient } from '../..'
 import { version } from '../../package.json'
 
@@ -14,6 +14,13 @@ export class Service {
 				headers?: Record<string, string>
 				axiosConfig?: AxiosRequestConfig
 				timeout?: number
+			}
+		>
+		errorHandlers?: Record<
+			string,
+			{
+				httpStatus?: number | number[]
+				endpoints?: string | string[]
 			}
 		>
 		hooks: Record<string, string[]>
@@ -62,7 +69,8 @@ export class Service {
 					Object.getOwnPropertyNames(this._p_props.hooks ?? {}).find(
 						(hookName) => this._p_props.hooks?.[hookName].includes(name)
 					) ?? 0 > 0
-				)
+				) &&
+				!this._p_props.errorHandlers?.[name]
 			)
 				throw new Error(
 					`Method "${name}" in service "${this.constructor.name}" is not decorated, use the @Transient decorator to ignore this method.`
@@ -86,7 +94,7 @@ export class Service {
 				...endpoint.axiosConfig,
 			}
 
-			const result = await this._axios.request({
+			const axiosConfig = {
 				method: endpoint.method,
 				url,
 
@@ -106,10 +114,65 @@ export class Service {
 
 					...axiosConfigInherit.headers,
 				},
-			})
+			}
 
-			return result.data
+			try {
+				const result = await this._axios.request(axiosConfig)
+				return result.data
+			} catch (error) {
+				if (error instanceof AxiosError) {
+					if (!error.response) throw error
+					this._handleHttpError(error, name)
+					return Object.entries(error.response.data).length > 0
+						? error.response.data
+						: undefined
+				}
+			}
 		}
+	}
+
+	@Transient
+	private _handleHttpError(error: AxiosError, endpoint: string) {
+		type ErrorHandler = (error: AxiosError, method: string) => void
+		let errorHandlerToUse: ErrorHandler | undefined
+
+		Object.entries(this._p_props.errorHandlers ?? {}).forEach((value) => {
+			if (!errorHandlerToUse) {
+				errorHandlerToUse = this[value[0] as keyof this] as ErrorHandler
+				return
+			}
+
+			// check if the error handler is more specific than the current one, if yes replace errorHandlerToUse
+			// undefined, undefined < [404, 401], undefined < 404, undefined < 401, ['endpoint1', 'endpoint2'] < 401, 'endpoint1'
+
+			Object.entries(this._p_props.errorHandlers ?? {}).forEach(
+				([key, value]) => {
+					if (!errorHandlerToUse) {
+						errorHandlerToUse = this[key as keyof this] as ErrorHandler
+						return
+					}
+
+					const currentHandler = this[key as keyof this] as ErrorHandler
+					const currentHttpStatus = value.httpStatus
+					const currentEndpoints = value.endpoints
+
+					if (
+						currentHandler &&
+						((Array.isArray(currentHttpStatus) &&
+							currentHttpStatus.includes(error.response?.status ?? 0)) ||
+							currentHttpStatus === error.response?.status ||
+							(Array.isArray(currentEndpoints) &&
+								currentEndpoints.includes(endpoint)) ||
+							currentEndpoints === endpoint)
+					) {
+						errorHandlerToUse = currentHandler
+					}
+				}
+			)
+		})
+
+		if (errorHandlerToUse) errorHandlerToUse(error, endpoint)
+		else throw error
 	}
 
 	@Transient
