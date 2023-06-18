@@ -1,5 +1,5 @@
 import { AxiosRequestConfig } from 'axios'
-import { Service } from '..'
+import { Service } from '../..'
 
 interface ServiceBuilderOptions {
 	host: string
