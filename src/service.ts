@@ -1,4 +1,4 @@
-import axios, { Axios, AxiosRequestConfig } from 'axios'
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
 import { ServiceBuilder, Transient } from '..'
 import { version } from '../package.json'
 
@@ -24,7 +24,7 @@ export class Service {
 	}
 	private _g_props: ServiceBuilder | undefined
 	private _methodMap: Map<string, (this: Service, ...args: never[]) => void>
-	private _axios: Axios
+	private _axios: AxiosInstance
 
 	constructor(builder: ServiceBuilder) {
 		this._g_props = builder
