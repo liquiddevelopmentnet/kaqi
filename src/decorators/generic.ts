@@ -15,6 +15,16 @@ export const Transient = (target: any, methodName: string) =>
 
 export const UrlSuffix = (suffix = '') => buildServiceDecorator({ suffix })
 
+export const ErrorHandler =
+	(httpStatus?: number | number[], endpoints?: string | string[]) =>
+	(target: Service, method: string) => {
+		ensureProps(target, 'errorHandlers')
+		target._pre_p_props.errorHandlers[method.toString()] = {
+			httpStatus,
+			endpoints,
+		}
+	}
+
 export const Hook =
 	(endpointName: string) => (target: Service, hookName: string) => {
 		ensureProps(target, 'hooks')
