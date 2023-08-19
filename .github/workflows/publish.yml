@@ -31,15 +31,8 @@ jobs:
         with:
           cmd: test
 
-      - name: Run build
-        uses: borales/actions-yarn@v4
-        with:
-          cmd: build
-
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          cd lib
-          npx semantic-release
+        run: npx semantic-release
