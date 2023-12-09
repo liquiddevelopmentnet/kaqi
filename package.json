@@ -8,9 +8,7 @@
 	"private": false,
 	"scripts": {
 		"test": "mocha --require ts-node/register tests/**/*.ts",
-		"build": "yarn clean && tsc && yarn copy-files",
-		"clean": "rm -rf lib",
-		"copy-files": "cp README.md LICENSE lib && cp package.json lib",
+		"build": "tsc",
 		"semantic-release": "semantic-release",
 		"prepare": "husky install"
 	},
@@ -38,5 +36,17 @@
 	},
 	"dependencies": {
 		"axios": "^1.4.0"
-	}
+	},
+	"release": {
+		"plugins": [
+			"@semantic-release/release-notes-generator",
+			"@semantic-release/changelog",
+			"@semantic-release/npm",
+			"@semantic-release/git",
+			"@semantic-release/github"
+		]
+	},
+	"files": [
+		"dist"
+	]
 }
