@@ -8,8 +8,9 @@
 	"private": false,
 	"scripts": {
 		"test": "mocha --require ts-node/register tests/**/*.ts",
-		"build": "yarn clean && tsc",
+		"build": "yarn clean && tsc && yarn copy-files",
 		"clean": "rm -rf lib",
+		"copy-files": "cp README.md LICENSE lib && cp package.json lib",
 		"semantic-release": "semantic-release",
 		"prepare": "husky install"
 	},
