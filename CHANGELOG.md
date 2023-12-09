@@ -1,3 +1,10 @@
+## [1.4.3](https://github.com/liquiddevelopmentnet/kaqi/compare/v1.4.2...v1.4.3) (2023-12-09)
+
+
+### Bug Fixes
+
+* proper file management for releases ([fede424](https://github.com/liquiddevelopmentnet/kaqi/commit/fede4242c92b84e564898e209f3f8bb0ce180051))
+
 ## [1.4.2](https://github.com/liquiddevelopmentnet/kaqi/compare/v1.4.1...v1.4.2) (2023-12-09)
 
 
