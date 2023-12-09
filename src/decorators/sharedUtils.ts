@@ -1,4 +1,4 @@
-import { Service } from '../..'
+import { Service } from '..'
 
 export const ensureProps = (target: Service, field: string) => {
 	target._pre_p_props ??= {}

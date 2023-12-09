@@ -1,0 +1,10 @@
+export declare const GET: (url: string) => (target: import("..").Service, endpointName: string) => void;
+export declare const POST: (url: string) => (target: import("..").Service, endpointName: string) => void;
+export declare const PUT: (url: string) => (target: import("..").Service, endpointName: string) => void;
+export declare const PATCH: (url: string) => (target: import("..").Service, endpointName: string) => void;
+export declare const DELETE: (url: string) => (target: import("..").Service, endpointName: string) => void;
+export declare const HEAD: (url: string) => (target: import("..").Service, endpointName: string) => void;
+export declare const OPTIONS: (url: string) => (target: import("..").Service, endpointName: string) => void;
+export declare const TRACE: (url: string) => (target: import("..").Service, endpointName: string) => void;
+export declare const CONNECT: (url: string) => (target: import("..").Service, endpointName: string) => void;
+export declare const CUSTOM: (method: string, url: string) => (target: import("..").Service, endpointName: string) => void;

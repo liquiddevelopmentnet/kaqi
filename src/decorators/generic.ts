@@ -4,7 +4,7 @@ import {
 	buildServiceDecorator,
 	ensureProps,
 } from './sharedUtils'
-import { Service } from '../..'
+import { Service } from '..'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Transient = (target: any, methodName: string) =>

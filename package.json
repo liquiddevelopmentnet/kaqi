@@ -6,9 +6,10 @@
 	"author": "liquiddevelopmentnet",
 	"license": "GPL-3.0",
 	"private": false,
+	"main": "lib/index.js",
 	"scripts": {
 		"test": "mocha --require ts-node/register tests/**/*.ts",
-		"build": "rm -rf ./dist && tsc && cp README.md LICENSE ./dist",
+		"build": "tsc && mv ./dist/src ./lib && rm -rf ./dist",
 		"semantic-release": "semantic-release",
 		"prepare": "husky install"
 	},
@@ -50,6 +51,6 @@
 		]
 	},
 	"files": [
-		"dist"
+		"lib"
 	]
 }

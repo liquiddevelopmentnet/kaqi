@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios'
-import { ServiceBuilder, Transient } from '../..'
+import { ServiceBuilder, Transient } from '..'
 import { version } from '../../package.json'
 
 export class Service {
