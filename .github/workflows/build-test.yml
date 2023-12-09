@@ -27,8 +27,3 @@ jobs:
         uses: borales/actions-yarn@v4
         with:
           cmd: build
-
-      - uses: actions/upload-artifact@master
-        with:
-          name: build
-          path: lib
