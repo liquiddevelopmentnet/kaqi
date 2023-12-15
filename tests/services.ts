@@ -18,7 +18,7 @@ import {
 	Headers,
 	AxiosConfig,
 	Timeout,
-} from '..'
+} from '../src'
 
 @UrlSuffix('/api')
 @Headers.Service({ 'Custom-Header': 'Service' })
