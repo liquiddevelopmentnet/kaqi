@@ -1,6 +1,15 @@
 import { AxiosRequestConfig } from 'axios'
 import { Service } from '..'
 
+/**
+ * Options for configuring the ServiceBuilder.
+ * @property host The host of the service.
+ * @property secure Whether or not to use HTTPS.
+ * @property basePath The base path of the service.
+ * @property headers Headers to be sent with every request.
+ * @property axiosConfig Axios configuration to be applied to every request.
+ * @property timeout Timeout for every request.
+ */
 interface ServiceBuilderOptions {
 	host: string
 	secure?: boolean

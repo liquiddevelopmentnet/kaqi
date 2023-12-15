@@ -1,7 +1,10 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios'
-import { ServiceBuilder, Transient } from '..'
+import { ParamType, ServiceBuilder, Transient } from '..'
 import { version } from '../../package.json'
 
+/**
+ * Contains internal structure and methods to prepare for a service to be built based on the kaqi decorators.
+ */
 export class Service {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	public _pre_p_props: any
@@ -12,6 +15,13 @@ export class Service {
 				url: string
 				method: string
 				headers?: Record<string, string>
+				params?: Record<
+					number,
+					{
+						type: ParamType
+						id: string
+					}
+				>
 				axiosConfig?: AxiosRequestConfig
 				timeout?: number
 			}
@@ -33,6 +43,10 @@ export class Service {
 	private _methodMap: Map<string, (this: Service, ...args: never[]) => void>
 	private _axios: AxiosInstance
 
+	/**
+	 * Constructs a new instance of the Service class.
+	 * @param builder The ServiceBuilder used to configure the service.
+	 */
 	constructor(builder: ServiceBuilder) {
 		this._g_props = builder
 		this._p_props = this._pre_p_props ?? { endpoints: {} }
@@ -48,6 +62,12 @@ export class Service {
 		})
 	}
 
+	/**
+	 * Creates a method map for the Service class.
+	 * The method map contains all the methods of the Service class that are not decorated with @Transient.
+	 * Each method in the map is bound to the current instance of the Service class.
+	 * @returns A Map object where the keys are the method names and the values are the bound method functions.
+	 */
 	@Transient
 	private _makeMethodMap() {
 		const methodMap = new Map<
@@ -80,14 +100,28 @@ export class Service {
 		return methodMap
 	}
 
+	/**
+	 * Builds an endpoint function based on the provided name, using the endpoint configuration.
+	 * @param name - The name of the endpoint method.
+	 */
 	@Transient
 	private _buildEndpointFunction(name: string) {
 		const endpoint = this._p_props.endpoints[name]
-		const url = `${this._g_props?.url}${this._p_props.suffix ?? ''}${
+		const pre_url = `${this._g_props?.url}${this._p_props.suffix ?? ''}${
 			endpoint.url
 		}`
 
-		this[name as keyof Service] = async () => {
+		this[name as keyof Service] = async (...args: object[]) => {
+			const url = endpoint.params
+				? this._resolveUrl(
+						pre_url,
+						Object.entries(endpoint.params)
+							.filter(([, value]) => value.type === ParamType.PATH)
+							.map(([, value]) => value.id),
+						args
+				  )
+				: pre_url
+
 			const axiosConfigInherit = {
 				...this._g_props?.options.axiosConfig,
 				...this._p_props.axiosConfig,
@@ -131,6 +165,11 @@ export class Service {
 		}
 	}
 
+	/**
+	 * Handles HTTP errors that occur during an axios request.
+	 * @param error - The Axios error object.
+	 * @param endpoint - The endpoint name where the error occurred.
+	 */
 	@Transient
 	private _handleHttpError(error: AxiosError, endpoint: string) {
 		type ErrorHandler = (error: AxiosError, method: string) => void
@@ -175,6 +214,10 @@ export class Service {
 		else throw error
 	}
 
+	/**
+	 * Injects hooks into the methods of the service.
+	 * @param name - The name of the method to inject the hooks into.
+	 */
 	@Transient
 	private _injectHooks(name: string) {
 		if (this._p_props.hooks?.[name]) {
@@ -190,5 +233,34 @@ export class Service {
 				}
 			})
 		}
+	}
+
+	/**
+	 * Resolves the URL by replacing the placeholders with the provided arguments.
+	 *
+	 * @param url - The URL string with placeholders.
+	 * @param params - An array of parameter names to be replaced in the URL.
+	 * @param args - An array of argument values to replace the parameters in the URL.
+	 * @returns The resolved URL string.
+	 */
+	@Transient
+	private _resolveUrl(url: string, params: string[], args: object[]): string {
+		let newUrl = url
+		params.forEach((param, index) => {
+			newUrl = newUrl.replace(
+				new RegExp(`{${param}}`, 'g'),
+				args[index].toString()
+			)
+		})
+		if (url.match(/{.*}/g))
+			throw new Error(
+				`Missing dynamic parameter(s) "${
+					url
+						.match(/{.*}/g)
+						?.map((value) => value.slice(1, -1))
+						.join(', ') ?? ''
+				}" in URL "${url}", make sure you provided all the required args.`
+			)
+		return newUrl
 	}
 }
