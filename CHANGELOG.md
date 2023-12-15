@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/liquiddevelopmentnet/kaqi/compare/v1.4.3...v1.5.0) (2023-12-15)
+
+
+### Features
+
+* added path parameter annotations, improved coding style, added JSDoc ([1279676](https://github.com/liquiddevelopmentnet/kaqi/commit/12796763822c49af32d76a759bd3e1c5857be772))
+
 ## [1.4.3](https://github.com/liquiddevelopmentnet/kaqi/compare/v1.4.2...v1.4.3) (2023-12-09)
 
 
