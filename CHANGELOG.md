@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/liquiddevelopmentnet/kaqi/compare/v1.5.0...v1.5.1) (2023-12-16)
+
+
+### Bug Fixes
+
+* fixed and improved url resolving ([d3f266e](https://github.com/liquiddevelopmentnet/kaqi/commit/d3f266e57f2fe4875981b4bb413c3d61b0440249))
+
 # [1.5.0](https://github.com/liquiddevelopmentnet/kaqi/compare/v1.4.3...v1.5.0) (2023-12-15)
 
 
