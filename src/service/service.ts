@@ -110,17 +110,6 @@ export class Service {
 		}`
 
 		this[name as keyof Service] = async (...args: object[]) => {
-			// if (args.length !== Object.keys(endpoint.params ?? {}).length) {
-			// 	throw new Error(
-			// 		`Endpoint "${name}" in service "${this.constructor.name}" requires ${
-			// 			Object.keys(endpoint.params ?? {}).length
-			// 		} arguments, but ${
-			// 			args.length
-			// 		} were provided. Make sure to provide all required arguments,
-			// 		the arguments are in the correct order, and that the arguments are decorated.`
-			// 	)
-			// }
-
 			const url = endpoint.params
 				? this._resolveUrl(
 						pre_url,
