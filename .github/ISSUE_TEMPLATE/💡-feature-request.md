@@ -1,17 +1,17 @@
 ---
 name: "\U0001F4A1 Feature request"
 about: Suggest a feature for this project.
-title: "[FEATURE REQUEST]"
+title: '[FEATURE REQUEST] '
 labels: enhancement
 assignees: ''
-
 ---
 
 **Checklist**
-* [ ] I've read and agree to the [kaqi Code of Conduct](https://github.com/liquiddevelopmentnet/kaqi/blob/release/CODE_OF_CONDUCT.md)
-* [ ] I've read the [kaqi Feature request guide](https://github.com/liquiddevelopmentnet/kaqi/blob/release/CONTRIBUTING.md#suggesting-enhancements)
-* [ ] I've made sure that this feature request does not already exist
-* [ ] I've filled out all the placeholders below
+
+- [ ] I've read and agree to the [kaqi Code of Conduct](https://github.com/liquiddevelopmentnet/kaqi/blob/release/CODE_OF_CONDUCT.md)
+- [ ] I've read the [kaqi Feature request guide](https://github.com/liquiddevelopmentnet/kaqi/blob/release/CONTRIBUTING.md#suggesting-enhancements)
+- [ ] I've made sure that this feature request does not already exist
+- [ ] I've filled out all the placeholders below
 
 **Is your feature request related to a problem? Please describe.**
 A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
