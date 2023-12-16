@@ -15,9 +15,10 @@ export const Path =
 	(id: string) =>
 	(target: Service, propertyKey: string, parameterIndex: number) => {
 		ensureEndpoints(target, propertyKey)
-		target._pre_p_props.endpoints[propertyKey].params ??= {}
-		target._pre_p_props.endpoints[propertyKey].params[parameterIndex] = {
+		target._pre_p_props.endpoints[propertyKey].params ??= []
+		target._pre_p_props.endpoints[propertyKey].params.push({
 			type: ParamType.PATH,
 			id,
-		}
+			index: parameterIndex,
+		})
 	}

@@ -15,13 +15,11 @@ export class Service {
 				url: string
 				method: string
 				headers?: Record<string, string>
-				params?: Record<
-					number,
-					{
-						type: ParamType
-						id: string
-					}
-				>
+				params?: {
+					type: ParamType
+					id: string
+					index: number
+				}[]
 				axiosConfig?: AxiosRequestConfig
 				timeout?: number
 			}
@@ -112,12 +110,23 @@ export class Service {
 		}`
 
 		this[name as keyof Service] = async (...args: object[]) => {
+			// if (args.length !== Object.keys(endpoint.params ?? {}).length) {
+			// 	throw new Error(
+			// 		`Endpoint "${name}" in service "${this.constructor.name}" requires ${
+			// 			Object.keys(endpoint.params ?? {}).length
+			// 		} arguments, but ${
+			// 			args.length
+			// 		} were provided. Make sure to provide all required arguments,
+			// 		the arguments are in the correct order, and that the arguments are decorated.`
+			// 	)
+			// }
+
 			const url = endpoint.params
 				? this._resolveUrl(
 						pre_url,
-						Object.entries(endpoint.params)
-							.filter(([, value]) => value.type === ParamType.PATH)
-							.map(([, value]) => value.id),
+						Object.values(endpoint.params).filter(
+							(param) => param.type === ParamType.PATH
+						),
 						args
 				  )
 				: pre_url
@@ -244,23 +253,28 @@ export class Service {
 	 * @returns The resolved URL string.
 	 */
 	@Transient
-	private _resolveUrl(url: string, params: string[], args: object[]): string {
+	private _resolveUrl(
+		url: string,
+		params: { type: ParamType; id: string; index: number }[],
+		args: object[]
+	): string {
 		let newUrl = url
-		params.forEach((param, index) => {
-			newUrl = newUrl.replace(
-				new RegExp(`{${param}}`, 'g'),
-				args[index].toString()
-			)
+		const matches = newUrl.match(/({[^{}]*})/g) ?? []
+		matches.forEach((match) => {
+			const param = params.find((param) => param.id === match.slice(1, -1))
+			if (param) {
+				newUrl = newUrl.replace(match, args[param.index].toString())
+			} else {
+				throw new Error(
+					`Value for parameter "${match.slice(
+						1,
+						-1
+					)}" in endpoint "${url}" in service "${
+						this.constructor.name
+					}" is not provided.`
+				)
+			}
 		})
-		if (url.match(/{.*}/g))
-			throw new Error(
-				`Missing dynamic parameter(s) "${
-					url
-						.match(/{.*}/g)
-						?.map((value) => value.slice(1, -1))
-						.join(', ') ?? ''
-				}" in URL "${url}", make sure you provided all the required args.`
-			)
 		return newUrl
 	}
 }
