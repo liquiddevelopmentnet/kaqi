@@ -58,7 +58,7 @@ We will then take care of the issue as soon as possible.
 - Fork the repository, clone it and install the dependencies by running `yarn install`.
 - Setup the pre-commit hook by running `yarn prepare`.
 - Create a new branch for your contribution.
-- Make your changes and commit them with a [good commit message](#commit-messages).
+- Make your changes and commit them with a [good commit message](#commit-message-styleguide).
 - Write unit tests for your changes, see [mocha](https://mochajs.org/) and [chai](https://www.chaijs.com/).
 - Add JSDoc comments to your added code, see [JSDoc](https://jsdoc.app/).
 - Push your changes to your fork and open a pull request against the `dev` branch of the main repository.
