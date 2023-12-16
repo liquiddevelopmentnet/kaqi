@@ -2,41 +2,44 @@ import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios'
 import { ParamType, ServiceBuilder, Transient } from '..'
 import { version } from '../../package.json'
 
+export interface PrivateProps {
+	endpoints: {
+		[key: string]: EndpointProps
+	}
+	errorHandlers?: Record<
+		string,
+		{
+			httpStatus?: number | number[]
+			endpoints?: string | string[]
+		}
+	>
+	hooks: Record<string, string[]>
+	suffix?: string
+	headers?: Record<string, string>
+	axiosConfig?: AxiosRequestConfig
+	timeout?: number
+}
+
+export interface EndpointProps {
+	url: string
+	method: string
+	headers?: Record<string, string>
+	params?: {
+		type: ParamType
+		id: string
+		index: number
+	}[]
+	axiosConfig?: AxiosRequestConfig
+	timeout?: number
+}
+
 /**
  * Contains internal structure and methods to prepare for a service to be built based on the kaqi decorators.
  */
 export class Service {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	public _pre_p_props: any
-	private _p_props: {
-		endpoints: Record<
-			string,
-			{
-				url: string
-				method: string
-				headers?: Record<string, string>
-				params?: {
-					type: ParamType
-					id: string
-					index: number
-				}[]
-				axiosConfig?: AxiosRequestConfig
-				timeout?: number
-			}
-		>
-		errorHandlers?: Record<
-			string,
-			{
-				httpStatus?: number | number[]
-				endpoints?: string | string[]
-			}
-		>
-		hooks: Record<string, string[]>
-		suffix?: string
-		headers?: Record<string, string>
-		axiosConfig?: AxiosRequestConfig
-		timeout?: number
-	}
+	private _p_props: PrivateProps
 	private _g_props: ServiceBuilder | undefined
 	private _methodMap: Map<string, (this: Service, ...args: never[]) => void>
 	private _axios: AxiosInstance

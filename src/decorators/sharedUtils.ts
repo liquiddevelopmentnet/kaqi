@@ -1,4 +1,4 @@
-import { Service } from '..'
+import { EndpointProps, PrivateProps, Service } from '..'
 
 /**
  * Ensures that the specified field exists in the target service's _pre_p_props property.
@@ -7,7 +7,7 @@ import { Service } from '..'
  * @param target - The target object.
  * @param field - The name of the field to ensure.
  */
-export const ensureProps = (target: Service, field: string) => {
+export const ensureProps = (target: Service, field: keyof PrivateProps) => {
 	target._pre_p_props ??= {}
 	target._pre_p_props[field] ||= {}
 }
@@ -31,8 +31,10 @@ export const ensureEndpoints = (target: Service, endpointName: string) => {
  * @returns A decorator function.
  */
 export const buildServiceDecorator =
-	(fields: Record<string, unknown>) => (target: typeof Service) => {
-		for (const field in fields) {
+	(fields: { [key in keyof PrivateProps]?: unknown }) =>
+	(target: typeof Service) => {
+		for (const _field in fields) {
+			const field = _field as keyof PrivateProps
 			ensureProps(target.prototype, field)
 			if (typeof fields[field] === 'object')
 				Object.assign(target.prototype._pre_p_props[field], fields[field])
@@ -47,10 +49,11 @@ export const buildServiceDecorator =
  * @returns A decorator function.
  */
 export const buildMethodDecorator =
-	(fields: Record<string, unknown>) =>
+	(fields: { [key in keyof EndpointProps]?: unknown }) =>
 	(target: Service, endpointName: string) => {
 		ensureEndpoints(target, endpointName)
-		for (const field in fields) {
+		for (const _field in fields) {
+			const field = _field as keyof EndpointProps
 			target._pre_p_props.endpoints[endpointName][field] ??= {}
 			if (typeof fields[field] === 'object')
 				Object.assign(
