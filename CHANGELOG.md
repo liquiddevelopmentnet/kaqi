@@ -1,3 +1,11 @@
+# [1.6.0](https://github.com/liquiddevelopmentnet/kaqi/compare/v1.5.1...v1.6.0) (2023-12-24)
+
+
+### Features
+
+* added `@CacheFor` decorator to cache results for a certain amount of time ([51e403c](https://github.com/liquiddevelopmentnet/kaqi/commit/51e403c1cad22c504c1d49d0de48a86434f5920b))
+* added `@Query` path decorators for url query data ([23030ca](https://github.com/liquiddevelopmentnet/kaqi/commit/23030caf52a179ae19a02ba0d08fcda6686e2107))
+
 ## [1.5.1](https://github.com/liquiddevelopmentnet/kaqi/compare/v1.5.0...v1.5.1) (2023-12-16)
 
 
