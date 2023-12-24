@@ -31,6 +31,7 @@ export interface EndpointProps {
 	}[]
 	axiosConfig?: AxiosRequestConfig
 	timeout?: number
+	cacheFor?: number
 }
 
 /**
@@ -43,6 +44,7 @@ export class Service {
 	private _g_props: ServiceBuilder | undefined
 	private _methodMap: Map<string, (this: Service, ...args: never[]) => void>
 	private _axios: AxiosInstance
+	private _cache: Map<string, { d: unknown; t: number }> = new Map()
 
 	/**
 	 * Constructs a new instance of the Service class.
@@ -59,8 +61,34 @@ export class Service {
 
 		this._methodMap.forEach((_method, name) => {
 			this._buildEndpointFunction(name)
+			this._wrapCache(name)
 			this._injectHooks(name)
 		})
+	}
+
+	/**
+	 * Wraps a method with caching functionality based on the specified cache duration, hooks are still executed AFTER cache evaluation.
+	 * @param name - The name of the method to wrap with caching.
+	 */
+	@Transient
+	private _wrapCache(name: string) {
+		if (this._p_props.endpoints[name].cacheFor === undefined) return
+		// eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+		const cacheFor = this._p_props.endpoints[name].cacheFor!
+		const currentMethod = this[name as keyof Service]
+
+		this[name as keyof Service] = async (...args: never[]) => {
+			const result = await currentMethod.apply(this, args)
+			const key = JSON.stringify({ k: name, a: args })
+
+			const cached = this._cache.get(key)
+			if (cached && Date.now() - cached.t < cacheFor) {
+				return cached.d
+			} else {
+				this._cache.set(key, { d: result, t: Date.now() })
+				return result
+			}
+		}
 	}
 
 	/**
@@ -129,7 +157,7 @@ export class Service {
 				...endpoint.axiosConfig,
 			}
 
-			const axiosConfig = {
+			const axiosConfig: AxiosRequestConfig = {
 				method: endpoint.method,
 				url,
 
@@ -149,6 +177,13 @@ export class Service {
 
 					...axiosConfigInherit.headers,
 				},
+
+				params: endpoint.params
+					?.filter((param) => param.type === ParamType.QUERY)
+					?.reduce((acc, cur) => {
+						acc[cur.id] = args[cur.index]
+						return acc
+					}, {} as Record<string, unknown>),
 			}
 
 			try {
@@ -228,7 +263,7 @@ export class Service {
 					const currentMethod = this[name as keyof Service]
 
 					this[name as keyof Service] = async (...args: never[]) => {
-						const result = await currentMethod(...args)
+						const result = await currentMethod.apply(this, args)
 						return hook(result)
 					}
 				}

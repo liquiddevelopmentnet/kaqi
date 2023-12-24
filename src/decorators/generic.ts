@@ -108,3 +108,12 @@ export const Timeout = {
 	 */
 	Method: (timeout: number) => buildMethodDecorator({ timeout }),
 }
+
+/**
+ * CacheFor decorator.
+ * This decorator can be used to cache the result of a method for a specified duration.
+ * @param duration - The duration for which the result should be cached, in milliseconds.
+ * @returns The decorated method with caching enabled for the specified duration.
+ */
+export const CacheFor = (duration: number) =>
+	buildMethodDecorator({ cacheFor: duration })
