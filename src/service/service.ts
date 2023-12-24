@@ -44,7 +44,7 @@ export class Service {
 	private _g_props: ServiceBuilder | undefined
 	private _methodMap: Map<string, (this: Service, ...args: never[]) => void>
 	private _axios: AxiosInstance
-	private _cache: Map<string, { data: unknown; ts: number }> = new Map()
+	private _cache: Map<string, { d: unknown; t: number }> = new Map()
 
 	/**
 	 * Constructs a new instance of the Service class.
@@ -82,10 +82,10 @@ export class Service {
 			const key = JSON.stringify({ k: name, a: args })
 
 			const cached = this._cache.get(key)
-			if (cached && Date.now() - cached.ts < cacheFor) {
-				return cached.data
+			if (cached && Date.now() - cached.t < cacheFor) {
+				return cached.d
 			} else {
-				this._cache.set(key, { data: result, ts: Date.now() })
+				this._cache.set(key, { d: result, t: Date.now() })
 				return result
 			}
 		}
@@ -157,7 +157,7 @@ export class Service {
 				...endpoint.axiosConfig,
 			}
 
-			const axiosConfig = {
+			const axiosConfig: AxiosRequestConfig = {
 				method: endpoint.method,
 				url,
 
@@ -177,6 +177,13 @@ export class Service {
 
 					...axiosConfigInherit.headers,
 				},
+
+				params: endpoint.params
+					?.filter((param) => param.type === ParamType.QUERY)
+					?.reduce((acc, cur) => {
+						acc[cur.id] = args[cur.index]
+						return acc
+					}, {} as Record<string, unknown>),
 			}
 
 			try {
