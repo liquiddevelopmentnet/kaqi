@@ -20,6 +20,12 @@ export const Transient = (target: any, methodName: string) =>
 		writable: false,
 	})
 
+/**
+ * Decorator that appends a suffix to the URL of a service.
+ *
+ * @param suffix The suffix to append to the URL.
+ * @returns The decorated service.
+ */
 export const UrlSuffix = (suffix = '') => buildServiceDecorator({ suffix })
 
 /**
