@@ -81,8 +81,6 @@ export class Service {
 			const result = await currentMethod.apply(this, args)
 			const key = JSON.stringify({ k: name, a: args })
 
-			console.debug(this._cache)
-
 			const cached = this._cache.get(key)
 			if (cached && Date.now() - cached.ts < cacheFor) {
 				return cached.data
