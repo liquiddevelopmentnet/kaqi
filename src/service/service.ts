@@ -78,13 +78,13 @@ export class Service {
 		const currentMethod = this[name as keyof Service]
 
 		this[name as keyof Service] = async (...args: never[]) => {
-			const result = await currentMethod.apply(this, args)
 			const key = JSON.stringify({ k: name, a: args })
 
 			const cached = this._cache.get(key)
 			if (cached && Date.now() - cached.t < cacheFor) {
 				return cached.d
 			} else {
+				const result = await currentMethod.apply(this, args)
 				this._cache.set(key, { d: result, t: Date.now() })
 				return result
 			}
