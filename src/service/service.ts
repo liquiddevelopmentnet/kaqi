@@ -139,8 +139,8 @@ export class Service {
 		const endpoint = this._p_props.endpoints[name]
 		const pre_url =
 			removeTrailingSlashes(this._g_props?.url ?? '') +
-			(addLeadingSlash(this._p_props.suffix) ?? '') +
-			(addLeadingSlash(endpoint.url) ?? '')
+			(addLeadingSlash(removeTrailingSlashes(this._p_props.suffix)) ?? '') +
+			(addLeadingSlash(removeTrailingSlashes(endpoint.url)) ?? '')
 
 		this[name as keyof Service] = async (...args: object[]) => {
 			const url = endpoint.params
