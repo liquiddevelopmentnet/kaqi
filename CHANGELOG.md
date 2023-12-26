@@ -1,3 +1,12 @@
+## [1.6.1](https://github.com/liquiddevelopmentnet/kaqi/compare/v1.6.0...v1.6.1) (2023-12-26)
+
+
+### Bug Fixes
+
+* added failsafe mechanism which tries to correct wrong usage of url building ([f728ab6](https://github.com/liquiddevelopmentnet/kaqi/commit/f728ab6222147ad4572db5983cc2cc45f33c27fb))
+* also remove trailing slashes on service suffix and endpoint urls ([373f1bc](https://github.com/liquiddevelopmentnet/kaqi/commit/373f1bc2ba82ecbea18f4c317a2dd85d2d871625))
+* fixed cache, querying the server even if valid cache is present ([3975b16](https://github.com/liquiddevelopmentnet/kaqi/commit/3975b166c4b3d14e95a2e06e82c3225b18eb0328))
+
 # [1.6.0](https://github.com/liquiddevelopmentnet/kaqi/compare/v1.5.1...v1.6.0) (2023-12-24)
 
 
