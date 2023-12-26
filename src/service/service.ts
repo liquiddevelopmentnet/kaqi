@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios'
 import { ParamType, ServiceBuilder, Transient } from '..'
 import { version } from '../../package.json'
+import { addLeadingSlash, removeTrailingSlashes } from '../utils'
 
 export interface PrivateProps {
 	endpoints: {
@@ -78,13 +79,13 @@ export class Service {
 		const currentMethod = this[name as keyof Service]
 
 		this[name as keyof Service] = async (...args: never[]) => {
-			const result = await currentMethod.apply(this, args)
 			const key = JSON.stringify({ k: name, a: args })
 
 			const cached = this._cache.get(key)
 			if (cached && Date.now() - cached.t < cacheFor) {
 				return cached.d
 			} else {
+				const result = await currentMethod.apply(this, args)
 				this._cache.set(key, { d: result, t: Date.now() })
 				return result
 			}
@@ -136,9 +137,10 @@ export class Service {
 	@Transient
 	private _buildEndpointFunction(name: string) {
 		const endpoint = this._p_props.endpoints[name]
-		const pre_url = `${this._g_props?.url}${this._p_props.suffix ?? ''}${
-			endpoint.url
-		}`
+		const pre_url =
+			removeTrailingSlashes(this._g_props?.url ?? '') +
+			(addLeadingSlash(removeTrailingSlashes(this._p_props.suffix)) ?? '') +
+			(addLeadingSlash(removeTrailingSlashes(endpoint.url)) ?? '')
 
 		this[name as keyof Service] = async (...args: object[]) => {
 			const url = endpoint.params

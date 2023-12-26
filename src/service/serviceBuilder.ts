@@ -1,5 +1,6 @@
 import { AxiosRequestConfig } from 'axios'
 import { Service } from '..'
+import { removeTrailingSlashes } from '../utils'
 
 /**
  * Options for configuring the ServiceBuilder.
@@ -26,15 +27,27 @@ export class ServiceBuilder {
 		this.options = options
 	}
 
+	private resolvePotentialSchemaInHost() {
+		if (this.options.host.startsWith('http://')) {
+			this.options.secure = false
+			this.options.host = this.options.host.replace(/^http:\/\//, '')
+		}
+		if (this.options.host.startsWith('https://')) {
+			this.options.secure = true
+			this.options.host = this.options.host.replace(/^https:\/\//, '')
+		}
+	}
+
 	public build<T extends Service>(
 		service: new (builder: ServiceBuilder) => T
 	): T {
+		this.resolvePotentialSchemaInHost()
 		return new service(this)
 	}
 
 	public get url() {
-		return `${this.options.secure ?? true ? 'https' : 'http'}://${
+		return `http${this.options.secure ? 's' : ''}://${removeTrailingSlashes(
 			this.options.host
-		}${this.options.basePath ?? ''}`
+		)}${removeTrailingSlashes(this.options.basePath) ?? ''}`
 	}
 }
