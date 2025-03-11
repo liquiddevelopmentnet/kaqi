@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/liquiddevelopmentnet/kaqi/compare/v1.6.1...v1.7.0) (2025-03-11)
+
+
+### Features
+
+* add `AttachResponse` decorator which attaches the axios response to the result ([7b7bfff](https://github.com/liquiddevelopmentnet/kaqi/commit/7b7bfffeb9be499bcd57c90852584168f8ce06f0))
+
 ## [1.6.1](https://github.com/liquiddevelopmentnet/kaqi/compare/v1.6.0...v1.6.1) (2023-12-26)
 
 
