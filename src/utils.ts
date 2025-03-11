@@ -1,3 +1,5 @@
+import type { AxiosResponse } from 'axios'
+
 /**
  * Removes trailing slashes from a string.
  *
@@ -15,3 +17,13 @@ export const removeTrailingSlashes = (str?: string) =>
  */
 export const addLeadingSlash = (str?: string) =>
 	str ? (str.startsWith('/') ? str : '/' + str) : undefined
+
+/**
+ * A type that combines a given type `T` with an attached Axios response.
+ *
+ * @template T - The type to be combined with the Axios response.
+ * @property {AxiosResponse<any, any>} _res - The attached Axios response.
+ */
+export type WithAttachedRes<T> = {
+	_res: AxiosResponse<any, any>
+} & T

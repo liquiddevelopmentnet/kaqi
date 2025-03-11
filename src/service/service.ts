@@ -33,6 +33,7 @@ export interface EndpointProps {
 	axiosConfig?: AxiosRequestConfig
 	timeout?: number
 	cacheFor?: number
+	attachResponse?: boolean
 }
 
 /**
@@ -57,7 +58,7 @@ export class Service {
 		this._methodMap = this._makeMethodMap()
 
 		this._axios = axios.create({
-			baseURL: this._g_props.url + this._p_props.suffix ?? '',
+			baseURL: this._g_props.url + (this._p_props.suffix ?? ''),
 		})
 
 		this._methodMap.forEach((_method, name) => {
@@ -150,7 +151,7 @@ export class Service {
 							(param) => param.type === ParamType.PATH
 						),
 						args
-				  )
+					)
 				: pre_url
 
 			const axiosConfigInherit = {
@@ -182,15 +183,20 @@ export class Service {
 
 				params: endpoint.params
 					?.filter((param) => param.type === ParamType.QUERY)
-					?.reduce((acc, cur) => {
-						acc[cur.id] = args[cur.index]
-						return acc
-					}, {} as Record<string, unknown>),
+					?.reduce(
+						(acc, cur) => {
+							acc[cur.id] = args[cur.index]
+							return acc
+						},
+						{} as Record<string, unknown>
+					),
 			}
 
 			try {
 				const result = await this._axios.request(axiosConfig)
-				return result.data
+				return endpoint.attachResponse
+					? { _res: result, ...result.data }
+					: result.data
 			} catch (error) {
 				if (error instanceof AxiosError) {
 					if (!error.response) throw error

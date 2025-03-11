@@ -21,4 +21,5 @@ yarn-error.log*
 
 # build
 /dist
+/test_dist
 /lib

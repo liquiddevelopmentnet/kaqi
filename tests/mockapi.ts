@@ -8,6 +8,9 @@ export const mockApi = () => {
 		.get('/api/john')
 		.reply(200, { r: 'get2' })
 
+		.get('/api/david')
+		.reply(200, { r: 'get3' }, { 'Test-Header': 'david123' })
+
 		.post('/api/post')
 		.reply(200, { r: 'post' })
 
