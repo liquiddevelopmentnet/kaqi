@@ -30,6 +30,9 @@ export interface EndpointProps {
 		id: string
 		index: number
 	}[]
+	body?: {
+		index: number
+	}
 	axiosConfig?: AxiosRequestConfig
 	timeout?: number
 	cacheFor?: number
@@ -163,6 +166,8 @@ export class Service {
 			const axiosConfig: AxiosRequestConfig = {
 				method: endpoint.method,
 				url,
+
+				data: endpoint.body ? args[endpoint.body.index] : undefined,
 
 				timeout:
 					endpoint.timeout ??

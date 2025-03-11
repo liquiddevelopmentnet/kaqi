@@ -41,3 +41,19 @@ export const Query =
 			index: parameterIndex,
 		})
 	}
+
+/**
+ * Decorator function for specifying a body parameter in a service method.
+ *
+ * @returns A decorator function that adds the body parameter to the service method.
+ */
+export const Body = (
+	target: Service,
+	propertyKey: string,
+	parameterIndex: number
+) => {
+	ensureEndpoints(target, propertyKey)
+	target._pre_p_props.endpoints[propertyKey].body = {
+		index: parameterIndex,
+	}
+}
