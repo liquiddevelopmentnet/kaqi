@@ -33,6 +33,7 @@ export interface EndpointProps {
 	axiosConfig?: AxiosRequestConfig
 	timeout?: number
 	cacheFor?: number
+	attachResponse?: boolean
 }
 
 /**
@@ -193,7 +194,9 @@ export class Service {
 
 			try {
 				const result = await this._axios.request(axiosConfig)
-				return result.data
+				return endpoint.attachResponse
+					? { _res: result, ...result.data }
+					: result.data
 			} catch (error) {
 				if (error instanceof AxiosError) {
 					if (!error.response) throw error

@@ -123,3 +123,11 @@ export const Timeout = {
  */
 export const CacheFor = (duration: number) =>
 	buildMethodDecorator({ cacheFor: duration })
+
+/**
+ * A decorator function that marks an endpoint to attach the Axios response to the result.
+ *
+ * @returns The decorated method with attaching the Axios response enabled.
+ */
+export const AttachResponse = () =>
+	buildMethodDecorator({ attachResponse: true })
