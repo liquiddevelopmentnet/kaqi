@@ -18,6 +18,7 @@ interface ServiceBuilderOptions {
 	headers?: Record<string, string>
 	axiosConfig?: AxiosRequestConfig
 	timeout?: number
+	disableUserAgent?: boolean
 }
 
 export class ServiceBuilder {
