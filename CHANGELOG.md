@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/liquiddevelopmentnet/kaqi/compare/v1.7.1...v1.8.0) (2025-03-11)
+
+
+### Features
+
+* add `Body` decorator which allows specifiying a body parameter to an endpoint function ([90f4497](https://github.com/liquiddevelopmentnet/kaqi/commit/90f4497822591859e5f0ae16cd915e1dfc5a92a5))
+
 ## [1.7.1](https://github.com/liquiddevelopmentnet/kaqi/compare/v1.7.0...v1.7.1) (2025-03-11)
 
 
