@@ -8,7 +8,7 @@
 	"private": false,
 	"main": "lib/index.js",
 	"scripts": {
-		"test": "mocha --require ts-node/esm tests/**/*.ts",
+		"test": "tsc -p tsconfig.test.json && mocha test_dist/tests/**/*.js && rm -rf ./test_dist",
 		"build": "tsc && mv ./dist/src ./lib && rm -rf ./dist",
 		"semantic-release": "semantic-release",
 		"prepare": "husky install",
@@ -33,9 +33,9 @@
 		"nock": "^13.3.1",
 		"prettier": "^3.1.1",
 		"semantic-release": "^22.0.12",
+		"semver": "^7.5.2",
 		"ts-node": "^10.9.1",
-		"typescript": "^5.0.4",
-		"semver": "^7.5.2"
+		"typescript": "^5.0.4"
 	},
 	"dependencies": {
 		"axios": "^1.6.2"
