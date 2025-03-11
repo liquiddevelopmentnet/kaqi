@@ -163,6 +163,24 @@ export class Service {
 				...endpoint.axiosConfig,
 			}
 
+			const userAgent = {
+				'User-Agent': this._g_props?.options.disableUserAgent
+					? undefined
+					: `kaqi/${version}`,
+			}
+
+			const inferredHeaders = {
+				...this._g_props?.options.headers, // Endpoint headers override service headers override global headers ...
+				...this._p_props.headers,
+				...endpoint.headers,
+
+				...axiosConfigInherit.headers,
+			}
+
+			const headers = this._g_props?.options.disableUserAgent
+				? inferredHeaders
+				: { ...userAgent, ...inferredHeaders }
+
 			const axiosConfig: AxiosRequestConfig = {
 				method: endpoint.method,
 				url,
@@ -176,15 +194,7 @@ export class Service {
 
 				...axiosConfigInherit,
 
-				headers: {
-					'User-Agent': `kaqi/${version}`,
-
-					...this._g_props?.options.headers, // Endpoint headers override service headers override global headers ...
-					...this._p_props.headers,
-					...endpoint.headers,
-
-					...axiosConfigInherit.headers,
-				},
+				headers,
 
 				params: endpoint.params
 					?.filter((param) => param.type === ParamType.QUERY)
