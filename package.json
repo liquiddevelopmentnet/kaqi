@@ -1,6 +1,6 @@
 {
 	"name": "kaqi",
-	"version": "1.8.0",
+	"version": "1.9.0",
 	"description": "A lightweight API wrapper framework utilizing axios",
 	"repository": "https://github.com/liquiddevelopmentnet/kaqi",
 	"author": "liquiddevelopmentnet",

@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/liquiddevelopmentnet/kaqi/compare/v1.8.0...v1.9.0) (2025-03-11)
+
+
+### Features
+
+* add option to disable user agent for  to serviceBuilder ([cb5e07c](https://github.com/liquiddevelopmentnet/kaqi/commit/cb5e07c1d23e01bd9dddd67d32651402dbb6fc60))
+
 # [1.8.0](https://github.com/liquiddevelopmentnet/kaqi/compare/v1.7.1...v1.8.0) (2025-03-11)
 
 
