@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import {
+import kaqi, {
 	Service,
 	GET,
 	UrlSuffix,
@@ -18,7 +18,9 @@ import {
 	Headers,
 	AxiosConfig,
 	Timeout,
+	AttachResponse,
 } from '../src'
+import { WithAttachedRes } from '../src/utils'
 
 @UrlSuffix('/api')
 @Headers.Service({ 'Custom-Header': 'Service' })
@@ -30,6 +32,12 @@ import {
 export class TestService extends Service {
 	@GET('/get')
 	async get() {}
+
+	@GET('/david')
+	@AttachResponse()
+	async david(): Promise<WithAttachedRes<{ r: string }>> {
+		return kaqi.placeholder()
+	}
 
 	@GET('/john')
 	async john() {}

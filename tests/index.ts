@@ -24,6 +24,11 @@ describe('Utility Decorators', () => {
 		const result = await testService.john()
 		expect(result).to.deep.equal({ r: 'foo' })
 	})
+
+	it('`@AttachResponse` Decorator', async () => {
+		const result = await testService.david()
+		expect(result._res.headers['test-header']).to.equal('david123')
+	})
 })
 
 describe('HTTP Method Decorators', () => {
