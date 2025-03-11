@@ -1,3 +1,10 @@
+## [1.7.1](https://github.com/liquiddevelopmentnet/kaqi/compare/v1.7.0...v1.7.1) (2025-03-11)
+
+
+### Bug Fixes
+
+* export `WithAttachedRes` type from lib index ([9860957](https://github.com/liquiddevelopmentnet/kaqi/commit/9860957fd7bce610f28c69d1094b75166ca5ecd1))
+
 # [1.7.0](https://github.com/liquiddevelopmentnet/kaqi/compare/v1.6.1...v1.7.0) (2025-03-11)
 
 
