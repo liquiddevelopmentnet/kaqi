@@ -89,4 +89,10 @@ export const mockApi = () => {
 		.post('/oauth-api/scoped')
 		.matchHeader('Authorization', 'Bearer test-access-token')
 		.reply(200, { r: 'scoped-data' })
+
+	// OAuth2 error scenarios
+	nock('http://auth.com')
+		.post('/oauth/token-error')
+		.reply(400, { error: 'invalid_client' })
+		.persist()
 }

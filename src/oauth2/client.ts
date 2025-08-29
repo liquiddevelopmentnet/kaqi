@@ -64,17 +64,28 @@ export class OAuth2Client {
 			params.append('scope', this.config.scope)
 		}
 
-		const response = await this.httpClient.post<OAuth2TokenResponse>(
-			this.config.tokenUrl,
-			params,
-			{
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded',
-				},
-			}
-		)
+		try {
+			const response = await this.httpClient.post<OAuth2TokenResponse>(
+				this.config.tokenUrl,
+				params,
+				{
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+					},
+				}
+			)
 
-		this.storeTokens(response.data)
+			if (!response.data.access_token) {
+				throw new Error('No access token in OAuth2 response')
+			}
+
+			this.storeTokens(response.data)
+		} catch (error) {
+			if (error instanceof Error) {
+				throw new Error(`OAuth2 client credentials flow failed: ${error.message}`)
+			}
+			throw new Error('OAuth2 client credentials flow failed: Unknown error')
+		}
 	}
 
 	/**
@@ -91,17 +102,29 @@ export class OAuth2Client {
 		params.append('client_id', this.config.clientId)
 		params.append('client_secret', this.config.clientSecret)
 
-		const response = await this.httpClient.post<OAuth2TokenResponse>(
-			this.config.tokenUrl,
-			params,
-			{
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded',
-				},
-			}
-		)
+		try {
+			const response = await this.httpClient.post<OAuth2TokenResponse>(
+				this.config.tokenUrl,
+				params,
+				{
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+					},
+				}
+			)
 
-		this.storeTokens(response.data)
+			if (!response.data.access_token) {
+				throw new Error('No access token in refresh response')
+			}
+
+			this.storeTokens(response.data)
+		} catch (error) {
+			this.clearTokens()
+			if (error instanceof Error) {
+				throw new Error(`OAuth2 token refresh failed: ${error.message}`)
+			}
+			throw new Error('OAuth2 token refresh failed: Unknown error')
+		}
 	}
 
 	/**

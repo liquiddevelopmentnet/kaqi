@@ -141,6 +141,18 @@ export class OAuth2TestService extends Service {
 	async postScoped() {}
 }
 
+@UrlSuffix('/oauth-api')
+@OAuth2.Service({
+	clientId: 'invalid-client',
+	clientSecret: 'invalid-secret',
+	tokenUrl: 'http://auth.com/oauth/token-error',
+	grantType: 'client_credentials',
+})
+export class OAuth2ErrorTestService extends Service {
+	@GET('/protected')
+	async getProtected() {}
+}
+
 const builder = new ServiceBuilder({
 	host: 'api.com',
 	secure: false,
@@ -162,5 +174,6 @@ const oauth2Builder = new ServiceBuilder({
 	secure: false,
 })
 const oauth2TestService = oauth2Builder.build(OAuth2TestService)
+const oauth2ErrorTestService = oauth2Builder.build(OAuth2ErrorTestService)
 
-export { testService, secureTestService, withoutHeadersService, timeoutService, oauth2TestService }
+export { testService, secureTestService, withoutHeadersService, timeoutService, oauth2TestService, oauth2ErrorTestService }

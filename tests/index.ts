@@ -7,6 +7,7 @@ import {
 	timeoutService,
 	withoutHeadersService,
 	oauth2TestService,
+	oauth2ErrorTestService,
 } from './services'
 
 mockApi()
@@ -156,5 +157,17 @@ describe('OAuth2 Authentication', () => {
 	it('`@OAuth2.Method` Decorator - Scoped Access', async () => {
 		const result = await oauth2TestService.postScoped()
 		expect(result).to.deep.equal({ r: 'scoped-data' })
+	})
+
+	it('OAuth2 Authentication Error Handling', async () => {
+		try {
+			await oauth2ErrorTestService.getProtected()
+			expect.fail('Should have thrown an error')
+		} catch (error) {
+			expect(error).to.be.an('error')
+			if (error instanceof Error) {
+				expect(error.message).to.include('OAuth2 authentication failed')
+			}
+		}
 	})
 })
