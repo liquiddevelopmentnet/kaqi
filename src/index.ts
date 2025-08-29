@@ -8,6 +8,7 @@ export * from './decorators/params'
 export * from './service/service'
 export * from './service/serviceBuilder'
 export * from './kaqiPlaceholder'
+export * from './oauth2'
 
 export type { WithAttachedRes } from './utils'
 

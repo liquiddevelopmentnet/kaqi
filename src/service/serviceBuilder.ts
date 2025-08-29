@@ -1,6 +1,7 @@
 import { AxiosRequestConfig } from 'axios'
 import { Service } from '..'
 import { removeTrailingSlashes } from '../utils'
+import { OAuth2ServiceConfig } from '../oauth2/types'
 
 /**
  * Options for configuring the ServiceBuilder.
@@ -10,6 +11,7 @@ import { removeTrailingSlashes } from '../utils'
  * @property headers Headers to be sent with every request.
  * @property axiosConfig Axios configuration to be applied to every request.
  * @property timeout Timeout for every request.
+ * @property oauth2Config OAuth2 configuration for authentication.
  */
 interface ServiceBuilderOptions {
 	host: string
@@ -19,6 +21,7 @@ interface ServiceBuilderOptions {
 	axiosConfig?: AxiosRequestConfig
 	timeout?: number
 	disableUserAgent?: boolean
+	oauth2Config?: OAuth2ServiceConfig
 }
 
 export class ServiceBuilder {
