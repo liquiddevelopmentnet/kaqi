@@ -131,3 +131,158 @@ export const CacheFor = (duration: number) =>
  */
 export const AttachResponse = () =>
 	buildMethodDecorator({ attachResponse: true })
+
+/**
+ * Authentication decorators for different auth types.
+ */
+export const Auth = {
+	/**
+	 * Bearer token authentication decorator for service level.
+	 * @param token - The bearer token.
+	 * @returns The decorated service.
+	 */
+	BearerService: (token: string) =>
+		buildServiceDecorator({
+			auth: { type: 'bearer', token },
+		}),
+
+	/**
+	 * Bearer token authentication decorator for method level.
+	 * @param token - The bearer token.
+	 * @returns The decorated method.
+	 */
+	BearerMethod: (token: string) =>
+		buildMethodDecorator({
+			auth: { type: 'bearer', token },
+		}),
+
+	/**
+	 * Basic authentication decorator for service level.
+	 * @param username - The username.
+	 * @param password - The password.
+	 * @returns The decorated service.
+	 */
+	BasicService: (username: string, password: string) =>
+		buildServiceDecorator({
+			auth: { type: 'basic', username, password },
+		}),
+
+	/**
+	 * Basic authentication decorator for method level.
+	 * @param username - The username.
+	 * @param password - The password.
+	 * @returns The decorated method.
+	 */
+	BasicMethod: (username: string, password: string) =>
+		buildMethodDecorator({
+			auth: { type: 'basic', username, password },
+		}),
+
+	/**
+	 * API key authentication decorator for service level.
+	 * @param key - The API key name.
+	 * @param value - The API key value.
+	 * @param header - The header name (defaults to key).
+	 * @returns The decorated service.
+	 */
+	ApiKeyService: (key: string, value: string, header?: string) =>
+		buildServiceDecorator({
+			auth: { type: 'apikey', key, value, header: header || key },
+		}),
+
+	/**
+	 * API key authentication decorator for method level.
+	 * @param key - The API key name.
+	 * @param value - The API key value.
+	 * @param header - The header name (defaults to key).
+	 * @returns The decorated method.
+	 */
+	ApiKeyMethod: (key: string, value: string, header?: string) =>
+		buildMethodDecorator({
+			auth: { type: 'apikey', key, value, header: header || key },
+		}),
+}
+
+/**
+ * Content-Type decorators for setting request content types.
+ */
+export const ContentType = {
+	/**
+	 * Service level content-type decorator.
+	 * @param contentType - The content-type value.
+	 * @returns The decorated service.
+	 */
+	Service: (contentType: string) =>
+		buildServiceDecorator({ contentType }),
+
+	/**
+	 * Method level content-type decorator.
+	 * @param contentType - The content-type value.
+	 * @returns The decorated method.
+	 */
+	Method: (contentType: string) =>
+		buildMethodDecorator({ contentType }),
+
+	/**
+	 * JSON content-type decorator for methods.
+	 * @returns The decorated method.
+	 */
+	JSON: () => buildMethodDecorator({ contentType: 'application/json' }),
+
+	/**
+	 * XML content-type decorator for methods.
+	 * @returns The decorated method.
+	 */
+	XML: () => buildMethodDecorator({ contentType: 'application/xml' }),
+
+	/**
+	 * Form data content-type decorator for methods.
+	 * @returns The decorated method.
+	 */
+	FormData: () =>
+		buildMethodDecorator({ contentType: 'application/x-www-form-urlencoded' }),
+
+	/**
+	 * Multipart form data content-type decorator for methods.
+	 * @returns The decorated method.
+	 */
+	MultipartFormData: () =>
+		buildMethodDecorator({ contentType: 'multipart/form-data' }),
+}
+
+/**
+ * Base URL override decorator for method level.
+ * @param baseUrl - The base URL to use for this method.
+ * @returns The decorated method.
+ */
+export const BaseUrl = (baseUrl: string) =>
+	buildMethodDecorator({ baseUrl })
+
+/**
+ * Query parameters decorators for adding static query parameters.
+ */
+export const QueryParams = {
+	/**
+	 * Service level query parameters decorator.
+	 * @param params - The query parameters to add.
+	 * @returns The decorated service.
+	 */
+	Service: (params: Record<string, string>) =>
+		buildServiceDecorator({ queryParams: params }),
+
+	/**
+	 * Method level query parameters decorator.
+	 * @param params - The query parameters to add.
+	 * @returns The decorated method.
+	 */
+	Method: (params: Record<string, string>) =>
+		buildMethodDecorator({ queryParams: params }),
+}
+
+/**
+ * Expected status code decorator for response validation.
+ * @param status - The expected status code(s).
+ * @returns The decorated method.
+ */
+export const ExpectStatus = (status: number | number[]) =>
+	buildMethodDecorator({ expectedStatus: status })

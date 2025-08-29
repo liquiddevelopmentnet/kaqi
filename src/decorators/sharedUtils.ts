@@ -36,7 +36,7 @@ export const buildServiceDecorator =
 		for (const _field in fields) {
 			const field = _field as keyof PrivateProps
 			ensureProps(target.prototype, field)
-			if (typeof fields[field] === 'object')
+			if (typeof fields[field] === 'object' && !Array.isArray(fields[field]))
 				Object.assign(target.prototype._pre_p_props[field], fields[field])
 			else target.prototype._pre_p_props[field] = fields[field]
 		}
@@ -55,7 +55,7 @@ export const buildMethodDecorator =
 		for (const _field in fields) {
 			const field = _field as keyof EndpointProps
 			target._pre_p_props.endpoints[endpointName][field] ??= {}
-			if (typeof fields[field] === 'object')
+			if (typeof fields[field] === 'object' && !Array.isArray(fields[field]))
 				Object.assign(
 					target._pre_p_props.endpoints[endpointName][field],
 					fields[field]
