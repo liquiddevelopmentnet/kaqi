@@ -2,6 +2,8 @@ import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios'
 import { ParamType, ServiceBuilder, Transient } from '..'
 import { version } from '../../package.json'
 import { addLeadingSlash, removeTrailingSlashes } from '../utils'
+import { OAuth2ServiceConfig, OAuth2MethodConfig } from '../oauth2/types'
+import { OAuth2Client } from '../oauth2/client'
 
 export interface PrivateProps {
 	endpoints: {
@@ -19,6 +21,7 @@ export interface PrivateProps {
 	headers?: Record<string, string>
 	axiosConfig?: AxiosRequestConfig
 	timeout?: number
+	oauth2Config?: OAuth2ServiceConfig
 }
 
 export interface EndpointProps {
@@ -37,6 +40,7 @@ export interface EndpointProps {
 	timeout?: number
 	cacheFor?: number
 	attachResponse?: boolean
+	oauth2Config?: OAuth2MethodConfig
 }
 
 /**
@@ -50,6 +54,7 @@ export class Service {
 	private _methodMap: Map<string, (this: Service, ...args: never[]) => void>
 	private _axios: AxiosInstance
 	private _cache: Map<string, { d: unknown; t: number }> = new Map()
+	private _oauth2Client?: OAuth2Client
 
 	/**
 	 * Constructs a new instance of the Service class.
@@ -63,6 +68,8 @@ export class Service {
 		this._axios = axios.create({
 			baseURL: this._g_props.url + (this._p_props.suffix ?? ''),
 		})
+
+		this._initializeOAuth2()
 
 		this._methodMap.forEach((_method, name) => {
 			this._buildEndpointFunction(name)
@@ -94,6 +101,41 @@ export class Service {
 				return result
 			}
 		}
+	}
+
+	/**
+	 * Initialize OAuth2 client if configuration is provided
+	 */
+	@Transient
+	private _initializeOAuth2() {
+		const oauth2Config = this._p_props.oauth2Config || this._g_props?.options.oauth2Config
+		if (oauth2Config) {
+			this._oauth2Client = new OAuth2Client(oauth2Config)
+		}
+	}
+
+	/**
+	 * Get authentication headers for the request
+	 */
+	@Transient
+	private async _getAuthHeaders(endpoint: EndpointProps): Promise<Record<string, string>> {
+		const authHeaders: Record<string, string> = {}
+		
+		const shouldSkipAuth = endpoint.oauth2Config?.skipAuth
+		if (shouldSkipAuth) {
+			return authHeaders
+		}
+
+		if (this._oauth2Client) {
+			try {
+				const accessToken = await this._oauth2Client.getAccessToken()
+				authHeaders.Authorization = this._oauth2Client.getAuthorizationHeader()
+			} catch (error) {
+				throw new Error(`OAuth2 authentication failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+			}
+		}
+
+		return authHeaders
 	}
 
 	/**
@@ -177,9 +219,11 @@ export class Service {
 				...axiosConfigInherit.headers,
 			}
 
+			const authHeaders = await this._getAuthHeaders(endpoint)
+
 			const headers = this._g_props?.options.disableUserAgent
-				? inferredHeaders
-				: { ...userAgent, ...inferredHeaders }
+				? { ...inferredHeaders, ...authHeaders }
+				: { ...userAgent, ...inferredHeaders, ...authHeaders }
 
 			const axiosConfig: AxiosRequestConfig = {
 				method: endpoint.method,

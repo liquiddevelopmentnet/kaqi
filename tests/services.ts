@@ -19,6 +19,7 @@ import kaqi, {
 	AxiosConfig,
 	Timeout,
 	AttachResponse,
+	OAuth2,
 } from '../src'
 import { WithAttachedRes } from '../src/utils'
 
@@ -119,6 +120,27 @@ export class SecureTestService extends Service {
 	async get() {}
 }
 
+@UrlSuffix('/oauth-api')
+@OAuth2.Service({
+	clientId: 'test-client-id',
+	clientSecret: 'test-client-secret',
+	tokenUrl: 'http://auth.com/oauth/token',
+	grantType: 'client_credentials',
+	scope: 'read write',
+})
+export class OAuth2TestService extends Service {
+	@GET('/protected')
+	async getProtected() {}
+
+	@GET('/public')
+	@OAuth2.Method({ skipAuth: true })
+	async getPublic() {}
+
+	@POST('/scoped')
+	@OAuth2.Method({ scope: 'admin' })
+	async postScoped() {}
+}
+
 const builder = new ServiceBuilder({
 	host: 'api.com',
 	secure: false,
@@ -135,4 +157,10 @@ builder.options.host = 'secure-api.com'
 builder.options.secure = true
 const secureTestService = builder.build(SecureTestService)
 
-export { testService, secureTestService, withoutHeadersService, timeoutService }
+const oauth2Builder = new ServiceBuilder({
+	host: 'api.com',
+	secure: false,
+})
+const oauth2TestService = oauth2Builder.build(OAuth2TestService)
+
+export { testService, secureTestService, withoutHeadersService, timeoutService, oauth2TestService }

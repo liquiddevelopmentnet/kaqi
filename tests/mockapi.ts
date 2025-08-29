@@ -65,4 +65,28 @@ export const mockApi = () => {
 	nock('https://secure-api.com')
 		.get('/secure-api/get-sec')
 		.reply(200, { r: 'get1-secure' })
+
+	// OAuth2 token endpoint
+	nock('http://auth.com')
+		.post('/oauth/token')
+		.reply(200, {
+			access_token: 'test-access-token',
+			token_type: 'Bearer',
+			expires_in: 3600,
+			scope: 'read write',
+		})
+		.persist()
+
+	// OAuth2 protected endpoints
+	nock('http://api.com')
+		.get('/oauth-api/protected')
+		.matchHeader('Authorization', 'Bearer test-access-token')
+		.reply(200, { r: 'protected-data' })
+
+		.get('/oauth-api/public')
+		.reply(200, { r: 'public-data' })
+
+		.post('/oauth-api/scoped')
+		.matchHeader('Authorization', 'Bearer test-access-token')
+		.reply(200, { r: 'scoped-data' })
 }

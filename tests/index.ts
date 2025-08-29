@@ -6,6 +6,7 @@ import {
 	testService,
 	timeoutService,
 	withoutHeadersService,
+	oauth2TestService,
 } from './services'
 
 mockApi()
@@ -138,5 +139,22 @@ describe('ServiceBuilder', () => {
 		// This is also testing if the hierarchy of headers is correct
 		const result = await withoutHeadersService.globalHeader()
 		expect(result).to.deep.equal({ r: 'globalheaders' })
+	})
+})
+
+describe('OAuth2 Authentication', () => {
+	it('`@OAuth2.Service` Decorator - Protected Endpoint', async () => {
+		const result = await oauth2TestService.getProtected()
+		expect(result).to.deep.equal({ r: 'protected-data' })
+	})
+
+	it('`@OAuth2.Method` Decorator - Skip Authentication', async () => {
+		const result = await oauth2TestService.getPublic()
+		expect(result).to.deep.equal({ r: 'public-data' })
+	})
+
+	it('`@OAuth2.Method` Decorator - Scoped Access', async () => {
+		const result = await oauth2TestService.postScoped()
+		expect(result).to.deep.equal({ r: 'scoped-data' })
 	})
 })
