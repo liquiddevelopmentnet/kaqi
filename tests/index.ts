@@ -6,6 +6,7 @@ import {
 	testService,
 	timeoutService,
 	withoutHeadersService,
+	serviceLevelDecoratorsTestService,
 } from './services'
 
 mockApi()
@@ -124,6 +125,81 @@ describe('`@Timeout` Decorator Group', () => {
 		} catch (e: any) {
 			expect(e.message).to.equal('timeout of 100ms exceeded')
 		}
+	})
+})
+
+describe('`@Auth` Decorator Group', () => {
+	it('`@Auth.BearerMethod` Decorator', async () => {
+		const result = await testService.bearerAuth()
+		expect(result).to.deep.equal({ r: 'bearer-success' })
+	})
+
+	it('`@Auth.BasicMethod` Decorator', async () => {
+		const result = await testService.basicAuth()
+		expect(result).to.deep.equal({ r: 'basic-success' })
+	})
+
+	it('`@Auth.ApiKeyMethod` Decorator', async () => {
+		const result = await testService.apikeyAuth()
+		expect(result).to.deep.equal({ r: 'apikey-success' })
+	})
+
+	it('`@Auth.BearerService` Decorator', async () => {
+		const result = await serviceLevelDecoratorsTestService.serviceBearerAuth()
+		expect(result).to.deep.equal({ r: 'service-bearer-success' })
+	})
+})
+
+describe('`@ContentType` Decorator Group', () => {
+	it('`@ContentType.JSON` Decorator', async () => {
+		const result = await testService.jsonContent()
+		expect(result).to.deep.equal({ r: 'json-content-success' })
+	})
+
+	it('`@ContentType.XML` Decorator', async () => {
+		const result = await testService.xmlContent()
+		expect(result).to.deep.equal({ r: 'xml-content-success' })
+	})
+
+	it('`@ContentType.FormData` Decorator', async () => {
+		const result = await testService.formContent()
+		expect(result).to.deep.equal({ r: 'form-content-success' })
+	})
+
+	it('`@ContentType.Service` Decorator', async () => {
+		const result = await serviceLevelDecoratorsTestService.serviceContentType()
+		expect(result).to.deep.equal({ r: 'service-json-success' })
+	})
+})
+
+describe('`@BaseUrl` Decorator', () => {
+	it('`@BaseUrl` Decorator', async () => {
+		const result = await testService.customBaseUrl()
+		expect(result).to.deep.equal({ r: 'custom-base-success' })
+	})
+})
+
+describe('`@QueryParams` Decorator Group', () => {
+	it('`@QueryParams.Method` Decorator', async () => {
+		const result = await testService.queryParams()
+		expect(result).to.deep.equal({ r: 'query-params-success' })
+	})
+
+	it('`@QueryParams.Service` Decorator', async () => {
+		const result = await serviceLevelDecoratorsTestService.serviceQueryParams()
+		expect(result).to.deep.equal({ r: 'service-query-success' })
+	})
+})
+
+describe('`@ExpectStatus` Decorator', () => {
+	it('`@ExpectStatus` with 201 status', async () => {
+		const result = await testService.expectStatus201()
+		expect(result).to.deep.equal({ r: 'status-201-success' })
+	})
+
+	it('`@ExpectStatus` with 400 status (array)', async () => {
+		const result = await testService.expectStatus400()
+		expect(result).to.deep.equal({ error: 'bad request' })
 	})
 })
 

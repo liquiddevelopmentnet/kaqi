@@ -19,6 +19,18 @@ export interface PrivateProps {
 	headers?: Record<string, string>
 	axiosConfig?: AxiosRequestConfig
 	timeout?: number
+	auth?: {
+		type: 'bearer' | 'basic' | 'apikey'
+		token?: string
+		username?: string
+		password?: string
+		key?: string
+		value?: string
+		header?: string
+	}
+	baseUrl?: string
+	queryParams?: Record<string, string>
+	contentType?: string
 }
 
 export interface EndpointProps {
@@ -37,6 +49,19 @@ export interface EndpointProps {
 	timeout?: number
 	cacheFor?: number
 	attachResponse?: boolean
+	auth?: {
+		type: 'bearer' | 'basic' | 'apikey'
+		token?: string
+		username?: string
+		password?: string
+		key?: string
+		value?: string
+		header?: string
+	}
+	baseUrl?: string
+	queryParams?: Record<string, string>
+	contentType?: string
+	expectedStatus?: number | number[]
 }
 
 /**
@@ -141,10 +166,19 @@ export class Service {
 	@Transient
 	private _buildEndpointFunction(name: string) {
 		const endpoint = this._p_props.endpoints[name]
-		const pre_url =
-			removeTrailingSlashes(this._g_props?.url ?? '') +
-			(addLeadingSlash(removeTrailingSlashes(this._p_props.suffix)) ?? '') +
-			(addLeadingSlash(removeTrailingSlashes(endpoint.url)) ?? '')
+		
+		let pre_url: string
+		if (endpoint.baseUrl) {
+			// When baseUrl is specified, use it completely and don't append suffix
+			pre_url = removeTrailingSlashes(endpoint.baseUrl) +
+				(addLeadingSlash(removeTrailingSlashes(endpoint.url)) ?? '')
+		} else {
+			// Handle base URL override from service level or use default
+			const baseUrl = this._p_props.baseUrl || (this._g_props?.url ?? '')
+			pre_url = removeTrailingSlashes(baseUrl) +
+				(addLeadingSlash(removeTrailingSlashes(this._p_props.suffix)) ?? '') +
+				(addLeadingSlash(removeTrailingSlashes(endpoint.url)) ?? '')
+		}
 
 		this[name as keyof Service] = async (...args: object[]) => {
 			const url = endpoint.params
@@ -169,17 +203,64 @@ export class Service {
 					: `kaqi/${version}`,
 			}
 
+			// Handle authentication
+			const authHeaders: Record<string, string> = {}
+			const auth = endpoint.auth || this._p_props.auth
+			if (auth) {
+				switch (auth.type) {
+					case 'bearer':
+						authHeaders['Authorization'] = `Bearer ${auth.token}`
+						break
+					case 'basic':
+						const credentials = Buffer.from(`${auth.username}:${auth.password}`).toString('base64')
+						authHeaders['Authorization'] = `Basic ${credentials}`
+						break
+					case 'apikey':
+						authHeaders[auth.header || auth.key || 'X-API-Key'] = auth.value || ''
+						break
+				}
+			}
+
+			// Handle content type
+			const contentTypeHeaders: Record<string, string> = {}
+			const contentType = endpoint.contentType || this._p_props.contentType
+			if (contentType) {
+				contentTypeHeaders['Content-Type'] = contentType
+			}
+
 			const inferredHeaders = {
 				...this._g_props?.options.headers, // Endpoint headers override service headers override global headers ...
 				...this._p_props.headers,
+				...authHeaders,
+				...contentTypeHeaders,
 				...endpoint.headers,
-
 				...axiosConfigInherit.headers,
 			}
 
 			const headers = this._g_props?.options.disableUserAgent
 				? inferredHeaders
 				: { ...userAgent, ...inferredHeaders }
+
+			// Handle query parameters
+			const queryParamsFromDecorator = {
+				...this._p_props.queryParams,
+				...endpoint.queryParams,
+			}
+
+			const endpointParams = endpoint.params
+				?.filter((param) => param.type === ParamType.QUERY)
+				?.reduce(
+					(acc, cur) => {
+						acc[cur.id] = args[cur.index]
+						return acc
+					},
+					{} as Record<string, unknown>
+				)
+
+			const allParams = {
+				...queryParamsFromDecorator,
+				...endpointParams,
+			}
 
 			const axiosConfig: AxiosRequestConfig = {
 				method: endpoint.method,
@@ -196,19 +277,20 @@ export class Service {
 
 				headers,
 
-				params: endpoint.params
-					?.filter((param) => param.type === ParamType.QUERY)
-					?.reduce(
-						(acc, cur) => {
-							acc[cur.id] = args[cur.index]
-							return acc
-						},
-						{} as Record<string, unknown>
-					),
+				params: Object.keys(allParams).length > 0 ? allParams : undefined,
+			}
+
+			// Override validateStatus if we have expected status codes
+			if (endpoint.expectedStatus) {
+				axiosConfig.validateStatus = (status: number) => {
+					const statusArray = Array.isArray(endpoint.expectedStatus) ? endpoint.expectedStatus : [endpoint.expectedStatus]
+					return statusArray.includes(status)
+				}
 			}
 
 			try {
 				const result = await this._axios.request(axiosConfig)
+				
 				return endpoint.attachResponse
 					? { _res: result, ...result.data }
 					: result.data
@@ -220,6 +302,7 @@ export class Service {
 						? error.response.data
 						: undefined
 				}
+				throw error
 			}
 		}
 	}
